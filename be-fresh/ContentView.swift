@@ -1,81 +1,98 @@
 import SwiftUI
-import CoreData
 
 struct ContentView: View {
-    @Environment(\.managedObjectContext) private var viewContext
-
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Item.timestamp, ascending: true)],
-        animation: .default)
-    private var items: FetchedResults<Item>
-
+    @State private var showStatus = true
+    @State private var showStatus1 = true
+    @State private var showStatus2 = true
+    @State private var showStatus3 = true
+    @State private var showStatus4 = true
+    @State private var showStatus5 = true
+    
     var body: some View {
-        NavigationView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp!, formatter: itemFormatter)")
-                    } label: {
-                        Text(item.timestamp!, formatter: itemFormatter)
+        VStack {
+            HStack(alignment: .top) {
+                Text("Settings")
+                Spacer()
+            }
+            .font(.system(size: 45))
+            .fontWeight(.heavy)
+            .padding()
+            
+            VStack(spacing: 15) {
+                Rectangle()
+                    .frame(height: 40)
+                    .foregroundColor(Color(red: 217, green: 217, blue :217))
+                    .cornerRadius(15)
+                    .overlay {
+                        Toggle("Toggle option", isOn: $showStatus)
+                            .padding()
                     }
-                }
-                .onDelete(perform: deleteItems)
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
+                    .padding([.leading, .trailing])
+                
+                Rectangle()
+                    .frame(height: 40)
+                    .foregroundColor(Color(red: 217, green: 217, blue: 217))
+                    .cornerRadius(15)
+                    .overlay {
+                        Toggle("Toggle option 1", isOn: $showStatus1)
+                            .padding()
                     }
-                }
+                    .padding([.leading, .trailing])
+                
+                Rectangle()
+                    .frame(height: 40)
+                    .foregroundColor(Color(red: 217, green: 217, blue: 217))
+                    .cornerRadius(15)
+                    .overlay {
+                        Toggle("Toggle option 2", isOn: $showStatus2)
+                            .padding()
+                    }
+                    .padding([.leading, .trailing])
+                
+                Rectangle()
+                    .frame(height: 40)
+                    .foregroundColor(Color(red: 217, green: 217, blue: 217))
+                    .cornerRadius(15)
+                    .overlay {
+                        Toggle("Toggle option 3", isOn: $showStatus3)
+                            .padding()
+                    }
+                    .padding([.leading, .trailing])
+                
+                Rectangle()
+                    .frame(height: 40)
+                    .foregroundColor(Color(red: 217, green: 217, blue: 217))
+                    .cornerRadius(15)
+                    .overlay {
+                        Toggle("Toggle option 4", isOn: $showStatus4)
+                            .padding()
+                    }
+                    .padding([.leading, .trailing])
+                
+                Rectangle()
+                    .frame(height: 40)
+                    .foregroundColor(Color(red: 217, green: 217, blue: 217))
+                    .cornerRadius(15)
+                    .overlay {
+                        Toggle("Toggle option 5", isOn: $showStatus5)
+                            .padding()
+                    }
+                    .padding([.leading, .trailing])
             }
-            Text("Select an item")
-        }
-    }
-
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(context: viewContext)
-            newItem.timestamp = Date()
-
-            do {
-                try viewContext.save()
-            } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-            }
-        }
-    }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            offsets.map { items[$0] }.forEach(viewContext.delete)
-
-            do {
-                try viewContext.save()
-            } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-                let nsError = error as NSError
-                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-            }
+            
+            Rectangle()
+                .foregroundColor(Color(red: 217, green: 217, blue: 217))
+                .cornerRadius(15)
+                .padding()
+            
+            Spacer()
+            
         }
     }
 }
 
-private let itemFormatter: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.dateStyle = .short
-    formatter.timeStyle = .medium
-    return formatter
-}()
-
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView().environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+        ContentView()
     }
 }
