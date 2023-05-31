@@ -37,7 +37,7 @@ struct ProductsView: View {
                             
                             VStack(alignment: .leading) {
                                 ForEach(products) { product in
-                                    ListItemView(name: product.productName ?? "error", date: String(describing: product.expirationDate), showLine: true)
+                                    ListItemView(name: product.productName ?? "error", date: String(describing: product.expirationDate!), showLine: true)
                                 }
                             Spacer()
                             }
@@ -101,7 +101,7 @@ struct ProductsView: View {
             var currentDate = Date()
 
             let calendar = Calendar.current
-            let oneHour: TimeInterval = 50
+            let oneHour: TimeInterval = 30
 
             if let newDate = calendar.date(byAdding: .second, value: Int(oneHour), to: currentDate) {
                 currentDate = newDate
@@ -110,8 +110,10 @@ struct ProductsView: View {
             let newProduct = Product(context: viewContext)
             newProduct.productName = "New Product"
             newProduct.expirationDate = currentDate
-            let notify = Notification()
-            notify.sendNotification(date: currentDate, type: "Product expiration", title: "Product expiration", body: "Product \(String(describing: newProduct.productName)) is expiring today")
+            //let notify = Notification()
+            //notify.askPerm()
+            Notification().sendNotification(date: currentDate, type: "time", title: "Product expiration", body: "Product \(String(describing: newProduct.productName!)) is expiring today")
+            print("\(String(describing: newProduct.productName))")
             do {
                 try viewContext.save()
             } catch {
