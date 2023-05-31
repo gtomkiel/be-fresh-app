@@ -1,17 +1,150 @@
-//
-//  ProductsView.swift
-//  be-fresh
-//
-//  Created by Grzegorz Tomkiel on 31/05/2023.
-//
-
 import SwiftUI
+import CoreData
 
 struct ProductsView: View {
+    @State private var currentDate = Date()
+    @Environment(\.managedObjectContext) var viewContext
+    @State private var isShowingSheet = false
+    @FetchRequest(
+        sortDescriptors: [NSSortDescriptor(keyPath: \Product.productName, ascending: true)],
+        animation: .default)
+    private var products: FetchedResults<Product>
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+            // basic layout
+        NavigationView(){
+            GeometryReader { geometry in
+                ZStack {
+                    VStack(alignment: .leading) {
+                        VStack(alignment: .leading) {
+                            Text("Your")
+                            Text("Products")
+                        }
+                        .font(.system(size: 45))
+                        .fontWeight(.heavy)
+                        .padding([.top, .bottom])
+                        
+                        Text("List of items")
+                            .font(.title)
+                            .fontWeight(.medium)
+                        
+                        ZStack(alignment: .leading) {
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(Color(red: 0.506, green: 0.718, blue: 0.345))
+                                .shadow(radius: 5)
+                            
+                            VStack(alignment: .leading) {
+                                // item list
+//                                List(products, id: \.self) { product in
+//                                    ListItemView(name: String(product.productName), date: String(product.expirationDate), showLine: true)
+//                                    }
+                                ForEach(products) { product in
+                                    ListItemView(name: product.productName ?? "error", date: String(describing: product.expirationDate), showLine: true)
+                                }
+                            Spacer()
+                            }
+                            .padding([.top, .leading, .trailing])
+                        }
+                    }
+                    .padding()
+                    
+                    // button
+                    VStack() {
+                        Spacer()
+                        HStack {
+                            Spacer()
+                            Button(action: {
+                                let calendar = Calendar.current
+                                
+                                // Define the time interval for one hour
+                                let oneHour: TimeInterval = 3600
+                                
+                                // Add one hour to the current date
+                                if let newDate = calendar.date(byAdding: .second, value: Int(oneHour), to: currentDate) {
+                                    // Update the current date
+                                    currentDate = newDate
+                                }
+                                addItem()
+                                
+                            }) {
+                                Image(systemName: "plus.circle.fill")
+                                    .resizable()
+                                    .frame(width: 64, height: 64)
+                                    .foregroundColor(.black)
+                            }
+                            .padding()
+                            .clipShape(Circle())
+                            .shadow(radius: 10)
+                        }
+                    }
+                }
+                // overlay
+                .sheet(isPresented: $isShowingSheet) {
+                    VStack(alignment: .leading) {
+                        Text("Add Product")
+                            .font(.largeTitle)
+                            .fontWeight(.bold)
+                        
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(Color(red: 0.506, green: 0.718, blue: 0.345))
+                            .shadow(radius: 5)
+                        
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(Color(red: 0.506, green: 0.718, blue: 0.345))
+                            .shadow(radius: 5)
+                            .frame(height: 50)
+                    }
+                    .padding()
+                    .presentationDetents([.fraction(0.5)])
+                }
+            }
+        }
+    }
+    private func addItem() {
+        withAnimation {
+            let newProduct = Product(context: viewContext)
+            newProduct.productName = "New Product"
+            newProduct.expirationDate = Date()
+            
+
+            do {
+                try viewContext.save()
+            } catch {
+                // Replace this implementation with code to handle the error appropriately.
+                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+                let nsError = error as NSError
+                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+            }
+        }
+    }
+    
+//    func getFirstTime() -> Bool{
+//        UserDefaults.standard.set(true, forKey: "FirstTime")
+//        return UserDefaults.standard.bool(forKey: "FirstTime")
+//    }
+
+    private func deleteItems(offsets: IndexSet) {
+        withAnimation {
+            offsets.map { products[$0] }.forEach(viewContext.delete)
+
+            do {
+                try viewContext.save()
+            } catch {
+                // Replace this implementation with code to handle the error appropriately.
+                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+                let nsError = error as NSError
+                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+            }
+        }
     }
 }
+
+private let itemFormatter: DateFormatter = {
+    let formatter = DateFormatter()
+    formatter.dateStyle = .short
+    formatter.timeStyle = .medium
+    return formatter
+}()
 
 struct ProductsView_Previews: PreviewProvider {
     static var previews: some View {
