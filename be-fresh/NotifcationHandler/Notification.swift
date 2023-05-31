@@ -36,7 +36,6 @@ class Notification {
         }
         else{
             askPerm()
-            sendNotification(date: Date, type: String, timeInterval: Double = 10, title: String, body: String)
         }
     }
 }

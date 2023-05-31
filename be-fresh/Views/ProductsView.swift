@@ -1,7 +1,9 @@
 import SwiftUI
 import CoreData
+import Foundation
 
 struct ProductsView: View {
+    //var notify = Notification()
     @State private var currentDate = Date()
     @Environment(\.managedObjectContext) var viewContext
     @State private var isShowingSheet = false
@@ -48,18 +50,17 @@ struct ProductsView: View {
                         HStack {
                             Spacer()
                             Button(action: {
-                                let calendar = Calendar.current
-                                
-                                // Define the time interval for one hour
-                                let oneHour: TimeInterval = 3600
-                                
-                                // Add one hour to the current date
-                                if let newDate = calendar.date(byAdding: .second, value: Int(oneHour), to: currentDate) {
-                                    // Update the current date
-                                    currentDate = newDate
-                                }
+//                                let calendar = Calendar.current
+//
+//                                // Define the time interval for one hour
+//                                let oneHour: TimeInterval = 3600
+//
+//                                // Add one hour to the current date
+//                                if let newDate = calendar.date(byAdding: .second, value: Int(oneHour), to: currentDate) {
+//                                    // Update the current date
+//                                    currentDate = newDate
+//                                }
                                 addItem()
-                                
                             }) {
                                 Image(systemName: "plus.circle.fill")
                                     .resizable()
@@ -97,11 +98,20 @@ struct ProductsView: View {
     }
     private func addItem() {
         withAnimation {
+            var currentDate = Date()
+
+            let calendar = Calendar.current
+            let oneHour: TimeInterval = 50
+
+            if let newDate = calendar.date(byAdding: .second, value: Int(oneHour), to: currentDate) {
+                currentDate = newDate
+                print(currentDate)
+            }
             let newProduct = Product(context: viewContext)
             newProduct.productName = "New Product"
-            newProduct.expirationDate = Date()
-            
-
+            newProduct.expirationDate = currentDate
+            let notify = Notification()
+            notify.sendNotification(date: currentDate, type: "Product expiration", title: "Product expiration", body: "Product \(String(describing: newProduct.productName)) is expiring today")
             do {
                 try viewContext.save()
             } catch {
