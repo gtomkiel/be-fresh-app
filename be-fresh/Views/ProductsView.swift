@@ -11,42 +11,36 @@ struct ProductsView: View {
     private var products: FetchedResults<Product>
     
     var body: some View {
-            // basic layout
         NavigationView(){
             GeometryReader { geometry in
                 ZStack {
                     VStack(alignment: .leading) {
-                        VStack(alignment: .leading) {
-                            Text("Your")
-                            Text("Products")
+                        HStack {
+                            Text("Your products")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .fontWeight(.heavy)
+                                .font(.system(size: 48))
                         }
-                        .font(.system(size: 45))
-                        .fontWeight(.heavy)
-                        .padding([.top, .bottom])
+                        .padding(.vertical, 20)
                         
                         Text("List of items")
-                            .font(.title)
-                            .fontWeight(.medium)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .fontWeight(.semibold)
+                            .font(.system(size: 24))
                         
                         ZStack(alignment: .leading) {
-                            RoundedRectangle(cornerRadius: 10)
+                            RoundedRectangle(cornerRadius: 15)
                                 .fill(Color(red: 0.506, green: 0.718, blue: 0.345))
                                 .shadow(radius: 5)
                             
                             VStack(alignment: .leading) {
-                                // item list
-//                                List(products, id: \.self) { product in
-//                                    ListItemView(name: String(product.productName), date: String(product.expirationDate), showLine: true)
-//                                    }
                                 ForEach(products) { product in
                                     ListItemView(name: product.productName ?? "error", date: String(describing: product.expirationDate), showLine: true)
                                 }
                             Spacer()
                             }
-                            .padding([.top, .leading, .trailing])
                         }
                     }
-                    .padding()
                     
                     // button
                     VStack() {
@@ -78,6 +72,7 @@ struct ProductsView: View {
                         }
                     }
                 }
+                .padding([.leading, .trailing])
                 // overlay
                 .sheet(isPresented: $isShowingSheet) {
                     VStack(alignment: .leading) {
