@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="ba7bb4c8-f846-4c49-986a-a8305b90fdbd" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/../be-fresh/JsonParser/NameParser.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../be-fresh.xcodeproj/project.pbxproj" beforeDir="false" afterPath="$PROJECT_DIR$/../be-fresh.xcodeproj/project.pbxproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../be-fresh/Views/ProductsView.swift" beforeDir="false" afterPath="$PROJECT_DIR$/../be-fresh/Views/ProductsView.swift" afterDir="false" />
-    </list>
+    <list default="true" id="ba7bb4c8-f846-4c49-986a-a8305b90fdbd" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -70,7 +65,7 @@
       <option name="presentableId" value="Default" />
       <updated>1685627567693</updated>
       <workItem from="1685627569443" duration="504000" />
-      <workItem from="1685690728486" duration="3329000" />
+      <workItem from="1685690728486" duration="3470000" />
     </task>
     <servers />
   </component>

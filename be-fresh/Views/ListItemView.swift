@@ -8,6 +8,8 @@ struct ListItemView: View {
     var name: String
     var date: String
     var showLine: Bool
+    @State private var isEditing = false
+    @State private var items = ["Item 1", "Item 2", "Item 3", "Item 4", "Item 5"]
     
     var body: some View {
         VStack {
@@ -27,6 +29,19 @@ struct ListItemView: View {
                             .font(.system(size: 15))
                     }
                     .padding(.leading)
+                    Button(action: {
+                            self.isEditing.toggle()
+                    }) {
+                        HStack {
+                            Image(systemName: "minus.circle")
+                            Text(isEditing ? "Done" : "Edit")
+                        }
+                        .font(.title2)
+                        .foregroundColor(.white)
+                        .padding()
+                        .background(Color.blue)
+                        .cornerRadius(8)
+                    }
                 }
                 .foregroundColor(Color.white)
                 
