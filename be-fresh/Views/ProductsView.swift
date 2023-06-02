@@ -3,7 +3,6 @@ import CoreData
 import Foundation
 
 struct ProductsView: View {
-    //var notify = Notification()
     @State private var currentDate = Date()
     @Environment(\.managedObjectContext) var viewContext
     @State private var isShowingSheet = false
@@ -74,7 +73,6 @@ struct ProductsView: View {
                     }
                 }
                 .padding([.leading, .trailing])
-                // overlay
                 .sheet(isPresented: $isShowingSheet) {
                     VStack(alignment: .leading) {
                         Text("Add Product")
@@ -108,28 +106,19 @@ struct ProductsView: View {
                 print(currentDate)
             }
             let newProduct = Product(context: viewContext)
-            newProduct.productName = "New Product"
+            newProduct.productName = NameParser().getNameFromJSON()
             newProduct.expirationDate = currentDate
-            //let notify = Notification()
-            //notify.askPerm()
             Notification().sendNotification(date: currentDate, type: "time", title: "Product expiration", body: "Product \(String(describing: newProduct.productName!)) is expiring today")
             print("\(String(describing: newProduct.productName))")
             do {
                 try viewContext.save()
             } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
                 let nsError = error as NSError
                 fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
             }
         }
     }
     
-//    func getFirstTime() -> Bool{
-//        UserDefaults.standard.set(true, forKey: "FirstTime")
-//        return UserDefaults.standard.bool(forKey: "FirstTime")
-//    }
-
     private func deleteItems(offsets: IndexSet) {
         withAnimation {
             offsets.map { products[$0] }.forEach(viewContext.delete)
@@ -137,8 +126,6 @@ struct ProductsView: View {
             do {
                 try viewContext.save()
             } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
                 let nsError = error as NSError
                 fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
             }
