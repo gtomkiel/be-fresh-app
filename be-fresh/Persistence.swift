@@ -41,6 +41,19 @@ struct PersistenceController {
         }
     }
     
+    func savePrName(prod: Product, name: String){
+        prod.productName = name
+        print("aaaaaaaaa")
+        print(name)
+        do {
+            try container.viewContext.save()
+            print("savavavavavaavaved")
+        } catch {
+            let nsError = error as NSError
+            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+        }
+    }
+    
     func deleteoldProducts(){
         let request: NSFetchRequest<Product> = Product.fetchRequest()
         do {

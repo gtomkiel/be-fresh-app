@@ -1,15 +1,16 @@
 //  ListItemView.swift
 //  fresh
-//
 
 import SwiftUI
 
 struct ListItemView: View {
-    var name: String
+    @State var name: String
     var date: String
     var showLine: Bool
+    var prdct: Product
     @State private var isEditing = false
-    @State private var items = ["Item 1", "Item 2", "Item 3", "Item 4", "Item 5"]
+    @State private var editedName = ""
+    @Environment(\.managedObjectContext) var viewContext
     
     var body: some View {
         VStack {
@@ -22,31 +23,43 @@ struct ListItemView: View {
                     
                     // item
                     VStack(alignment:.leading, spacing: 0) {
-                        Text(name)
-                            .font(.system(size: 20))
-                            .fontWeight(.bold)
+                        if isEditing {
+                            TextField("Enter name", text: $editedName)
+                                .font(.system(size: 20))
+                                .fontWeight(.bold)
+                        } else {
+                            Text(name)
+                                .font(.system(size: 20))
+                                .fontWeight(.bold)
+                        }
+                        
                         Text(date)
                             .font(.system(size: 15))
                     }
                     .padding(.leading)
-                    Button(action: {
-                            self.isEditing.toggle()
-                    }) {
-                        HStack {
-                            Image(systemName: "minus.circle")
-                            Text(isEditing ? "Done" : "Edit")
-                        }
-                        .font(.title2)
-                        .foregroundColor(.white)
-                        .padding()
-                        .background(Color.blue)
-                        .cornerRadius(8)
-                    }
                 }
                 .foregroundColor(Color.white)
                 
                 Spacer()
-                Image("ItemBtn")
+                
+                Button(action: {
+                    isEditing.toggle()
+                    if isEditing {
+                        editedName = name
+                    } else {
+                        name = editedName
+//                        PersistenceController.preview.savePrName(prod: prdct, name: name)
+                    }
+                }) {
+                    HStack {
+                        Image(systemName: isEditing ? "checkmark" : "pencil")
+                    }
+                    .font(.title2)
+                    .foregroundColor(.white)
+                    .padding()
+                    .background(Color.blue)
+                    .cornerRadius(8)
+                }
             }
             .padding(10)
             
@@ -65,11 +78,11 @@ struct ListItemView_Previews: PreviewProvider {
                 .fill(Color(red: 0.506, green: 0.718, blue: 0.345))
                 .shadow(radius: 5)
             VStack(alignment: .leading) {
-                ListItemView(name: "NAME", date: "2023-01-03", showLine: true)
-                
-                ListItemView(name: "NAME", date: "2023-01-03", showLine: true)
-                
-                ListItemView(name: "NAME", date: "2023-01-03", showLine: true)
+//                ListItemView(name: "NAME", date: "2023-01-03", showLine: true)
+//                
+//                ListItemView(name: "NAME", date: "2023-01-03", showLine: true)
+//                
+//                ListItemView(name: "NAME", date: "2023-01-03", showLine: true)
                 Spacer()
             }
             .padding([.top, .leading, .trailing])

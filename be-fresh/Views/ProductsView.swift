@@ -3,6 +3,8 @@ import CoreData
 import Foundation
 
 struct ProductsView: View {
+    @State private var perCont = PersistenceController.shared
+    @State private var isEditing = false
     @State private var currentDate = Date()
     @Environment(\.managedObjectContext) var viewContext
     @State private var isShowingSheet = false
@@ -10,6 +12,8 @@ struct ProductsView: View {
         sortDescriptors: [NSSortDescriptor(keyPath: \Product.productName, ascending: true)],
         animation: .default)
     private var products: FetchedResults<Product>
+    @State private var isSwiped = false
+    @GestureState private var dragOffset: CGSize = .zero
     
     var body: some View {
         NavigationView(){
@@ -36,7 +40,24 @@ struct ProductsView: View {
                             
                             VStack(alignment: .leading) {
                                 ForEach(products) { product in
-                                    ListItemView(name: product.productName ?? "error", date: String(describing: product.expirationDate!), showLine: true)
+                                    HStack{
+                                        ListItemView(name: product.productName ?? "error", date: String(describing: product.expirationDate!), showLine: true, prdct: product)
+//                                        Button(action: {
+//                                            PersistenceController.shared.deleteProduct(product)
+//                                        }) {
+//                                            HStack {
+//                                                Image(systemName: "minus.circle")
+//                                                Text(isEditing ? "Done" : "Edit")
+//                                            }
+//                                            .font(.title2)
+//                                            .foregroundColor(.red)
+//                                            .padding()
+//                                            .background(Color.blue)
+//                                            .cornerRadius(8)
+//                                            .frame(width: 50, height: 25)
+//                                        }
+
+                                    }
                                 }
                             Spacer()
                             }
@@ -49,16 +70,6 @@ struct ProductsView: View {
                         HStack {
                             Spacer()
                             Button(action: {
-//                                let calendar = Calendar.current
-//
-//                                // Define the time interval for one hour
-//                                let oneHour: TimeInterval = 3600
-//
-//                                // Add one hour to the current date
-//                                if let newDate = calendar.date(byAdding: .second, value: Int(oneHour), to: currentDate) {
-//                                    // Update the current date
-//                                    currentDate = newDate
-//                                }
                                 addItem()
                             }) {
                                 Image(systemName: "plus.circle.fill")
@@ -99,7 +110,7 @@ struct ProductsView: View {
             var currentDate = Date()
 
             let calendar = Calendar.current
-            let oneHour: TimeInterval = 30
+            let oneHour: TimeInterval = 3600
 
             if let newDate = calendar.date(byAdding: .second, value: Int(oneHour), to: currentDate) {
                 currentDate = newDate
