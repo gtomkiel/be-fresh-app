@@ -10,7 +10,7 @@ struct ListItemView: View {
     var prdct: Product
     @State private var isEditing = false
     @State private var editedName = ""
-    @Environment(\.managedObjectContext) var viewContext
+
     
     var body: some View {
         VStack {
@@ -48,7 +48,7 @@ struct ListItemView: View {
                         editedName = name
                     } else {
                         name = editedName
-//                        PersistenceController.preview.savePrName(prod: prdct, name: name)
+                        PersistenceController.shared.savePrName(product: prdct, name: name)
                     }
                 }) {
                     HStack {
@@ -57,7 +57,20 @@ struct ListItemView: View {
                     .font(.title2)
                     .foregroundColor(.white)
                     .padding()
-                    .background(Color.blue)
+                    .background(Color.yellow)
+                    .cornerRadius(8)
+                }
+                
+                Button(action: {
+                    PersistenceController.shared.deleteProduct(prdct)
+                }) {
+                    HStack {
+                        Image(systemName: "minus.circle")
+                    }
+                    .font(.title2)
+                    .foregroundColor(.white)
+                    .padding()
+                    .background(Color.red)
                     .cornerRadius(8)
                 }
             }
