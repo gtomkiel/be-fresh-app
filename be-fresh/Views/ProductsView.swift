@@ -3,6 +3,9 @@ import CoreData
 import Foundation
 
 struct ProductsView: View {
+    @State private var isManually = false
+    @State private var isBarcodeSheet = false
+    @State var rem = UserDefaults.standard.bool(forKey: "RemoveRename")
     @State private var perCont = PersistenceController.shared
     @State private var isEditing = false
     @State private var currentDate = Date()
@@ -42,21 +45,6 @@ struct ProductsView: View {
                                 ForEach(products) { product in
                                     HStack{
                                         ListItemView(name: product.productName ?? "error", date: String(describing: product.expirationDate!), showLine: true, prdct: product)
-//                                        Button(action: {
-//                                            PersistenceController.shared.deleteProduct(product)
-//                                        }) {
-//                                            HStack {
-//                                                Image(systemName: "minus.circle")
-//                                                Text(isEditing ? "Done" : "Edit")
-//                                            }
-//                                            .font(.title2)
-//                                            .foregroundColor(.red)
-//                                            .padding()
-//                                            .background(Color.blue)
-//                                            .cornerRadius(8)
-//                                            .frame(width: 50, height: 25)
-//                                        }
-
                                     }
                                 }
                             Spacer()
@@ -70,6 +58,7 @@ struct ProductsView: View {
                             Spacer()
                             Button(action: {
                                 addItem()
+                                isShowingSheet = true
                             }) {
                                 Image(systemName: "plus.circle.fill")
                                     .resizable()
@@ -88,18 +77,34 @@ struct ProductsView: View {
                         Text("Add Product")
                             .font(.largeTitle)
                             .fontWeight(.bold)
+                        Button("Add manually"){
+                            isShowingSheet = false
+                            isManually = true
+                        }
+                        Spacer()
+                        Button("Scan the barcode"){
+                            isShowingSheet = false
+                            isBarcodeSheet = true
+                        }
+                
                         
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(Color(red: 0.506, green: 0.718, blue: 0.345))
-                            .shadow(radius: 5)
-                        
-                        RoundedRectangle(cornerRadius: 10)
-                            .fill(Color(red: 0.506, green: 0.718, blue: 0.345))
-                            .shadow(radius: 5)
-                            .frame(height: 50)
+//                        RoundedRectangle(cornerRadius: 10)
+//                            .fill(Color(red: 0.506, green: 0.718, blue: 0.345))
+//                            .shadow(radius: 5)
+//
+//                        RoundedRectangle(cornerRadius: 10)
+//                            .fill(Color(red: 0.506, green: 0.718, blue: 0.345))
+//                            .shadow(radius: 5)
+//                            .frame(height: 50)
                     }
                     .padding()
                     .presentationDetents([.fraction(0.5)])
+                }
+                .sheet(isPresented: $isManually){
+                    Text("manually")
+                }
+                .sheet(isPresented: $isBarcodeSheet){
+                    Text("barcode")
                 }
             }
         }

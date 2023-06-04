@@ -5,11 +5,11 @@ struct ListItemView: View {
     var date: String
     var showLine: Bool
     var prdct: Product
-    @State var removeRename = UserDefaults.standard.bool(forKey: "RemoveRename")
+    var rem = UserDefaults.standard.bool(forKey: "RemoveRename")
+    
     @State private var isEditing = false
     @State private var editedName = ""
 
-    
     var body: some View {
         VStack {
             HStack(alignment: .center) {
@@ -39,7 +39,7 @@ struct ListItemView: View {
                 .foregroundColor(Color.white)
                 
                 Spacer()
-                if removeRename{
+                if rem {
                     Button(action: {
                         isEditing.toggle()
                         if isEditing {
@@ -75,29 +75,9 @@ struct ListItemView: View {
             }
             .padding(10)
             
-            if (showLine) {
+            if showLine {
                 Image("Line")
             }
-        }
-    }
-}
-
-// preview
-struct ListItemView_Previews: PreviewProvider {
-    static var previews: some View {
-        ZStack(alignment: .leading) {
-            RoundedRectangle(cornerRadius: 10)
-                .fill(Color(red: 0.506, green: 0.718, blue: 0.345))
-                .shadow(radius: 5)
-            VStack(alignment: .leading) {
-//                ListItemView(name: "NAME", date: "2023-01-03", showLine: true)
-//                
-//                ListItemView(name: "NAME", date: "2023-01-03", showLine: true)
-//                
-//                ListItemView(name: "NAME", date: "2023-01-03", showLine: true)
-                Spacer()
-            }
-            .padding([.top, .leading, .trailing])
         }
     }
 }
