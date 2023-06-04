@@ -14,50 +14,54 @@ struct HomePage: View {
         NavigationView(){
             GeometryReader { geometry in
                 ZStack {
-                    Color("backgroundColor")
-                    VStack {
-                        HStack {
-                            Text("Hello user")
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .fontWeight(.heavy)
-                                .font(.system(size: 48))
-                        }
-                        .padding(.vertical, 20)
-
-
+                    ScrollView {
+                        Color("backgroundColor")
                         VStack {
-                            Text("Upcoming expire dates")
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .fontWeight(.semibold)
-                                .font(.system(size: 24))
-                            Rectangle()
-                                .foregroundColor(Color("greenColor"))
-                                .frame(height: 264)
-                                .cornerRadius(15)
-                                .shadow(radius: 5)
-                        }
-                        .padding(.bottom, 20)
-                        
-                        VStack {
-                            Text("Todays recommendation")
-                                .fontWeight(.semibold)
-                                .font(.system(size: 24))
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            Rectangle()
-                                .foregroundColor(Color("greenColor"))
-                                .frame(height: 264)
-                                .cornerRadius(15)
-                                .shadow(radius: 5)
-                                .overlay{
-                                    Image("addButton")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(height: 59)
-                                        .position(x: 300, y: 250)
+                            HStack {
+                                if (model.isLoggedIn && model.currentUser != nil) {
+                                    Text("Hello! " + model.currentUser!.firstName!)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .fontWeight(.heavy)
+                                        .font(.system(size: 48))
                                 }
+                            }
+                            .padding(.vertical, 20)
+                            
+                            
+                            VStack {
+                                Text("Upcoming expire dates")
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .fontWeight(.semibold)
+                                    .font(.system(size: 24))
+                                Rectangle()
+                                    .foregroundColor(Color("greenColor"))
+                                    .frame(height: 264)
+                                    .cornerRadius(15)
+                                    .shadow(radius: 5)
+                            }
+                            .padding(.bottom, 20)
+                            
+                            VStack {
+                                Text("Todays recommendation")
+                                    .fontWeight(.semibold)
+                                    .font(.system(size: 24))
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                Rectangle()
+                                    .foregroundColor(Color("greenColor"))
+                                    .frame(height: 204)
+                                    .cornerRadius(15)
+                                    .shadow(radius: 5)
+                                    .overlay{
+                                        Image("addButton")
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(height: 59)
+                                            .position(x: 300, y: 250)
+                                    }
+                            }
+                            .padding(.bottom, 20)
+                            Spacer()
                         }
-                        .padding(.bottom, 20)
-                        Spacer()
                     }
                 }
                 .padding([.leading, .trailing])

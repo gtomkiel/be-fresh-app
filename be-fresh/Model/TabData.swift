@@ -4,9 +4,33 @@ import Combine
 import CoreData
 
 class DefautlModel: ObservableObject {
+    
+    init() {
+        if isLoggedIn && LoggedInUserEmail != nil {
+            // fetch user from coreData
+            let fetchRequest: NSFetchRequest<UserEntity> = UserEntity.fetchRequest()
+            fetchRequest.predicate = NSPredicate(format: "email == %@", LoggedInUserEmail!)
+            
+            do {
+                let persistenceController = PersistenceController.shared
+                let users = try persistenceController.container.viewContext.fetch(fetchRequest)
+                
+                if !users.isEmpty {
+                    currentUser = users.first
+                }
+            } catch {
+                print(error)
+            }
+        }
+    }
 
     @Published var pageStatus: PageType = .main
-    @Published var isLoggedIn = false
+    
+    // MARK -- for login use
+    @Published var isLoggedIn = UserDefaults.standard.bool(forKey: "isLoggedIn")
+    @Published var LoggedInUserEmail = UserDefaults.standard.string(forKey: "LoggedInUserEmail")
+    @Published var currentUser : UserEntity?
+    
     @Published var showLogin = false
     @Published var showRegister = false
     

@@ -1,6 +1,5 @@
 import SwiftUI
 import CoreData
-import Foundation
 
 struct ProductsView: View {
     @State private var currentDate = Date()
@@ -33,14 +32,17 @@ struct ProductsView: View {
                             RoundedRectangle(cornerRadius: 15)
                                 .fill(Color(red: 0.506, green: 0.718, blue: 0.345))
                                 .shadow(radius: 5)
-                            
+
                             VStack(alignment: .leading) {
-                                ForEach(products) { product in
-                                    ListItemView(name: product.productName ?? "error", date: String(describing: product.expirationDate!), showLine: true)
+                                ScrollView {
+                                    ForEach(products) { product in
+                                        ListItemView(name: product.productName ?? "error", date: String(describing: product.expirationDate), showLine: true)
+                                    }
+                                    Spacer()
                                 }
-                            Spacer()
                             }
                         }
+                        .padding()
                     }
                     
                     // button
@@ -49,17 +51,18 @@ struct ProductsView: View {
                         HStack {
                             Spacer()
                             Button(action: {
-//                                let calendar = Calendar.current
-//
-//                                // Define the time interval for one hour
-//                                let oneHour: TimeInterval = 3600
-//
-//                                // Add one hour to the current date
-//                                if let newDate = calendar.date(byAdding: .second, value: Int(oneHour), to: currentDate) {
-//                                    // Update the current date
-//                                    currentDate = newDate
-//                                }
+                                let calendar = Calendar.current
+                                
+                                // Define the time interval for one hour
+                                let oneHour: TimeInterval = 3600
+                                
+                                // Add one hour to the current date
+                                if let newDate = calendar.date(byAdding: .second, value: Int(oneHour), to: currentDate) {
+                                    // Update the current date
+                                    currentDate = newDate
+                                }
                                 addItem()
+                                
                             }) {
                                 Image(systemName: "plus.circle.fill")
                                     .resizable()
@@ -73,6 +76,7 @@ struct ProductsView: View {
                     }
                 }
                 .padding([.leading, .trailing])
+                // overlay
                 .sheet(isPresented: $isShowingSheet) {
                     VStack(alignment: .leading) {
                         Text("Add Product")
@@ -96,29 +100,27 @@ struct ProductsView: View {
     }
     private func addItem() {
         withAnimation {
-            var currentDate = Date()
-
-            let calendar = Calendar.current
-            let oneHour: TimeInterval = 30
-
-            if let newDate = calendar.date(byAdding: .second, value: Int(oneHour), to: currentDate) {
-                currentDate = newDate
-                print(currentDate)
-            }
             let newProduct = Product(context: viewContext)
-            newProduct.productName = NameParser().getNameFromJSON()
-            newProduct.expirationDate = currentDate
-            Notification().sendNotification(date: currentDate, type: "time", title: "Product expiration", body: "Product \(String(describing: newProduct.productName!)) is expiring today")
-            print("\(String(describing: newProduct.productName))")
+            newProduct.productName = "New Product"
+            newProduct.expirationDate = Date()
+            
+
             do {
                 try viewContext.save()
             } catch {
+                // Replace this implementation with code to handle the error appropriately.
+                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
                 let nsError = error as NSError
                 fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
             }
         }
     }
     
+//    func getFirstTime() -> Bool{
+//        UserDefaults.standard.set(true, forKey: "FirstTime")
+//        return UserDefaults.standard.bool(forKey: "FirstTime")
+//    }
+
     private func deleteItems(offsets: IndexSet) {
         withAnimation {
             offsets.map { products[$0] }.forEach(viewContext.delete)
@@ -126,6 +128,8 @@ struct ProductsView: View {
             do {
                 try viewContext.save()
             } catch {
+                // Replace this implementation with code to handle the error appropriately.
+                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
                 let nsError = error as NSError
                 fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
             }

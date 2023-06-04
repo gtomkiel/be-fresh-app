@@ -35,8 +35,8 @@ struct NextContentView: View {
                         .cornerRadius(15)
                         .onTapGesture {
                             withAnimation {
-                                UserDefaults.standard.set(false, forKey: "FirstTime")
-                                model.first = false
+                                UserDefaults.standard.set(true, forKey: "FirstTime")
+                                model.first = true
                                 dismiss()
                             }
                         }

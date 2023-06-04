@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct ContentView: View {
+    @EnvironmentObject var defaultModel: DefautlModel
+    
     var body: some View {
         TabView {
             HomePage()
@@ -28,6 +30,7 @@ struct ContentView: View {
                     Image(systemName: "gearshape")
                     Text("Settings")
                 }
+                .environmentObject(defaultModel)
         }
         .accentColor(Color.init("greenColor"))
     }
