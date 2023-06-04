@@ -1,13 +1,7 @@
-//
-//  NextContentView.swift
-//  playingui
-//
-//  Created by Богдан Закусило on 09.05.2023.
-//
 import SwiftUI
 
 struct NextContentView: View {
-    @EnvironmentObject var model: DefautlModel
+    //@EnvironmentObject var model: DefautlModel
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
@@ -36,7 +30,7 @@ struct NextContentView: View {
                         .onTapGesture {
                             withAnimation {
                                 UserDefaults.standard.set(false, forKey: "FirstTime")
-                                model.first = false
+                                //model.first = false
                                 dismiss()
                             }
                         }

@@ -1,10 +1,3 @@
-//
-//  Bookmarks.swift
-//  be-fresh
-//
-//  Created by Grzegorz Tomkiel on 31/05/2023.
-//
-
 import SwiftUI
 
 struct Bookmarks: View {
@@ -33,6 +26,7 @@ struct Bookmarks: View {
                             .frame(height: 104)
                             .foregroundColor(Color("greenColor"))
                             .cornerRadius(15)
+                            .shadow(radius: 5)
                     }
                     
                     VStack {
@@ -45,6 +39,7 @@ struct Bookmarks: View {
                             .frame(height: 104)
                             .foregroundColor(Color("greenColor"))
                             .cornerRadius(15)
+                            .shadow(radius: 5)
                     }
                 }
             }

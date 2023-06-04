@@ -43,22 +43,11 @@ struct ProductsView: View {
                         }
                     }
                     
-                    // button
                     VStack() {
                         Spacer()
                         HStack {
                             Spacer()
                             Button(action: {
-//                                let calendar = Calendar.current
-//
-//                                // Define the time interval for one hour
-//                                let oneHour: TimeInterval = 3600
-//
-//                                // Add one hour to the current date
-//                                if let newDate = calendar.date(byAdding: .second, value: Int(oneHour), to: currentDate) {
-//                                    // Update the current date
-//                                    currentDate = newDate
-//                                }
                                 addItem()
                             }) {
                                 Image(systemName: "plus.circle.fill")
