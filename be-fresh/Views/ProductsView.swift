@@ -36,10 +36,11 @@ struct ProductsView: View {
                             .fontWeight(.semibold)
                             .font(.system(size: 24))
                         
-                        ZStack(alignment: .leading) {
+                        ZStack(alignment: .topLeading) {
                             RoundedRectangle(cornerRadius: 15)
                                 .fill(Color(red: 0.506, green: 0.718, blue: 0.345))
                                 .shadow(radius: 5)
+                                .frame(height: 602)
                             
                             VStack(alignment: .leading) {
                                 ForEach(products) { product in

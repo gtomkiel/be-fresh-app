@@ -65,7 +65,7 @@ struct Message : Codable {
                 }
             } catch {
                 DispatchQueue.main.async {
-                    self.response = "Something broke"
+                    self.response = "Could not retrieve data..."
                 }
                 print("definetly proper error handling")
             }

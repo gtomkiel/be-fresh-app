@@ -18,7 +18,21 @@ struct RecipesView: View {
                 .fontWeight(.semibold)
                 .font(.system(size: 24))
             if(api.response.isEmpty) {
-                ProgressView()
+                Rectangle()
+                    .foregroundColor(Color("greenColor"))
+                    .frame(height: 150)
+                    .cornerRadius(15)
+                    .shadow(radius: 5)
+                    .overlay{
+                        if (api.response.isEmpty) {
+                            ProgressView()
+                        } else {
+                            Text(api.response)
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color.white)
+                                .padding(10)
+                        }
+                    }
             } else {
                 Text(api.response)
                     .fontWeight(.semibold)

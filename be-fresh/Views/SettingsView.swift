@@ -10,13 +10,13 @@ struct SettingsView: View {
     
     var body: some View {
         VStack {
-            HStack() {
+            HStack {
                 Text("Settings")
-                Spacer()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding([.leading, .trailing])
+                    .fontWeight(.heavy)
+                    .font(.system(size: 48))
             }
-            .font(.system(size: 48))
-            .fontWeight(.heavy)
-            .padding([.leading, .trailing])
             .padding(.vertical, 20)
             List {
                 Rectangle()
@@ -25,14 +25,10 @@ struct SettingsView: View {
                     .cornerRadius(15)
                     .overlay {
                         Toggle("Rename Delete Products", isOn: $showStatus)
-                            .padding()
                     }.onChange(of: showStatus) { newValue in
                         UserDefaults.standard.set(newValue, forKey: "RemoveRename")
                         print(newValue)
                     }
-                
-                
-            
                 
                 Rectangle()
                     .frame(height: 50)

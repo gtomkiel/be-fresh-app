@@ -35,6 +35,9 @@ struct HomePage: View {
                                 .frame(height: 264)
                                 .cornerRadius(15)
                                 .shadow(radius: 5)
+                                .overlay(
+                                    ProgressView()
+                                )
                         }
                         .padding(.bottom, 20)
                         
@@ -68,7 +71,7 @@ struct HomePage: View {
             }
         }
         .onAppear() {
-            //api.fetchData()
+            api.fetchData()
         }
     }
 }
