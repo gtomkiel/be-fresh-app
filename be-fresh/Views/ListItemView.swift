@@ -8,6 +8,7 @@ struct ListItemView: View {
     var date: String
     var showLine: Bool
     var prdct: Product
+    @State var removeRename = UserDefaults.standard.bool(forKey: "RemoveRename")
     @State private var isEditing = false
     @State private var editedName = ""
 
@@ -41,37 +42,38 @@ struct ListItemView: View {
                 .foregroundColor(Color.white)
                 
                 Spacer()
-                
-                Button(action: {
-                    isEditing.toggle()
-                    if isEditing {
-                        editedName = name
-                    } else {
-                        name = editedName
-                        PersistenceController.shared.savePrName(product: prdct, name: name)
+                if removeRename{
+                    Button(action: {
+                        isEditing.toggle()
+                        if isEditing {
+                            editedName = name
+                        } else {
+                            name = editedName
+                            PersistenceController.shared.savePrName(product: prdct, name: name)
+                        }
+                    }) {
+                        HStack {
+                            Image(systemName: isEditing ? "checkmark" : "pencil")
+                        }
+                        .font(.title2)
+                        .foregroundColor(.white)
+                        .padding()
+                        .background(Color.yellow)
+                        .cornerRadius(8)
                     }
-                }) {
-                    HStack {
-                        Image(systemName: isEditing ? "checkmark" : "pencil")
+                    
+                    Button(action: {
+                        PersistenceController.shared.deleteProduct(prdct)
+                    }) {
+                        HStack {
+                            Image(systemName: "minus.circle")
+                        }
+                        .font(.title2)
+                        .foregroundColor(.white)
+                        .padding()
+                        .background(Color.red)
+                        .cornerRadius(8)
                     }
-                    .font(.title2)
-                    .foregroundColor(.white)
-                    .padding()
-                    .background(Color.yellow)
-                    .cornerRadius(8)
-                }
-                
-                Button(action: {
-                    PersistenceController.shared.deleteProduct(prdct)
-                }) {
-                    HStack {
-                        Image(systemName: "minus.circle")
-                    }
-                    .font(.title2)
-                    .foregroundColor(.white)
-                    .padding()
-                    .background(Color.red)
-                    .cornerRadius(8)
                 }
             }
             .padding(10)
