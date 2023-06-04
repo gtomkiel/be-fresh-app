@@ -64,7 +64,6 @@ struct ProductsView: View {
                         }
                     }
                     
-                    // button
                     VStack() {
                         Spacer()
                         HStack {

@@ -1,6 +1,3 @@
-//  ListItemView.swift
-//  fresh
-
 import SwiftUI
 
 struct ListItemView: View {

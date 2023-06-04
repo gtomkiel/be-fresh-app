@@ -16,9 +16,9 @@ struct SettingsView: View {
             }
             .font(.system(size: 48))
             .fontWeight(.heavy)
+            .padding([.leading, .trailing])
             .padding(.vertical, 20)
-            
-            VStack(spacing: 15) {
+            List {
                 Rectangle()
                     .frame(height: 50)
                     .foregroundColor(Color(red: 217, green: 217, blue :217))
@@ -38,7 +38,6 @@ struct SettingsView: View {
                     .cornerRadius(15)
                     .overlay {
                         Toggle("Toggle option 1", isOn: $showStatus1)
-                            .padding()
                     }
                 
                 Rectangle()
@@ -47,7 +46,6 @@ struct SettingsView: View {
                     .cornerRadius(15)
                     .overlay {
                         Toggle("Toggle option 2", isOn: $showStatus2)
-                            .padding()
                     }
                 
                 Rectangle()
@@ -56,7 +54,6 @@ struct SettingsView: View {
                     .cornerRadius(15)
                     .overlay {
                         Toggle("Toggle option 3", isOn: $showStatus3)
-                            .padding()
                     }
                 
                 Rectangle()
@@ -65,7 +62,6 @@ struct SettingsView: View {
                     .cornerRadius(15)
                     .overlay {
                         Toggle("Toggle option 4", isOn: $showStatus4)
-                            .padding()
                     }
                 
                 Rectangle()
@@ -74,19 +70,11 @@ struct SettingsView: View {
                     .cornerRadius(15)
                     .overlay {
                         Toggle("Toggle option 5", isOn: $showStatus5)
-                            .padding()
                     }
             }
-            
-            Rectangle()
-                .foregroundColor(Color(red: 217, green: 217, blue: 217))
-                .cornerRadius(15)
-                .padding()
-            
-            Spacer()
-            
+            .scrollContentBackground(.hidden)
         }
-        .padding([.leading, .trailing])
+        .background(Color(red: 253, green: 255, blue: 252))
     }
 }
 

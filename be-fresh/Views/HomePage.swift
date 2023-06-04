@@ -8,13 +8,13 @@ import SwiftUI
 import CoreData
 
 struct HomePage: View {
-    @EnvironmentObject var model: DefautlModel
+    //@EnvironmentObject var model: DefautlModel
+    @StateObject var api = ApiCall(prompt: "Give me 3 food recipe ideas in a list based on those products [chicken, tomato sauce, pasta, cheese, mushrooms] keep it short", temperature: "0.7")
     
     var body: some View {
         NavigationView(){
             GeometryReader { geometry in
                 ZStack {
-                    Color("backgroundColor")
                     VStack {
                         HStack {
                             Text("Hello user")
@@ -49,11 +49,14 @@ struct HomePage: View {
                                 .cornerRadius(15)
                                 .shadow(radius: 5)
                                 .overlay{
-                                    Image("addButton")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(height: 59)
-                                        .position(x: 300, y: 250)
+                                    if (api.response.isEmpty) {
+                                        ProgressView()
+                                    } else {
+                                        Text(api.response)
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(Color.white)
+                                            .padding(10)
+                                    }
                                 }
                         }
                         .padding(.bottom, 20)
@@ -61,7 +64,11 @@ struct HomePage: View {
                     }
                 }
                 .padding([.leading, .trailing])
+                .background(Color(red: 253, green: 255, blue: 252))
             }
+        }
+        .onAppear() {
+            //api.fetchData()
         }
     }
 }
