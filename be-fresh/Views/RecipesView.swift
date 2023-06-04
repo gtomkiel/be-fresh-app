@@ -1,7 +1,9 @@
 import SwiftUI
 
 struct RecipesView: View {
-    @StateObject var api = ApiCall(prompt: "Give recipe based on those products [chicken, tomato sauce, pasta, cheese, mushrooms]", temperature: "0.7")
+    @StateObject var api = ApiCall(prompt: "Give me formatted recipe based on those products [chicken, tomato sauce, pasta, cheese, mushrooms]", temperature: "0.7")
+    
+    @State private var launched = false
     
     var body: some View {
         VStack {
@@ -27,29 +29,41 @@ struct RecipesView: View {
                         if (api.response.isEmpty) {
                             ProgressView()
                         } else {
-                            Text(api.response)
-                                .fontWeight(.semibold)
-                                .foregroundColor(Color.white)
-                                .padding(10)
+                            VStack {
+                                Text(api.response)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .fontWeight(.medium)
+                                    .font(.system(size: 20))
+                                    .foregroundColor(Color.white)
+                                    .padding(10)
+                                Spacer()
+                            }
                         }
                     }
             } else {
-                Text(api.response)
-                    .fontWeight(.semibold)
-                    .foregroundColor(Color.white)
-                    .padding(10)
-                    .background(
-                        Rectangle()
-                            .foregroundColor(Color("greenColor"))
-                            .cornerRadius(15)
-                            .shadow(radius: 5)
-                    )
+                GeometryReader { geo in
+                    Text(api.response)
+                        .fontWeight(.semibold)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .foregroundColor(Color.white)
+                        .padding(10)
+                        .background(
+                            Rectangle()
+                                .frame(width: geo.size.width)
+                                .foregroundColor(Color("greenColor"))
+                                .cornerRadius(15)
+                                .shadow(radius: 5)
+                        )
+                }
             }
             Spacer()
         }
         .padding([.leading, .trailing])
         .onAppear() {
-            api.fetchData()
+            if (!launched) {
+                api.fetchData()
+                launched.toggle()
+            }
         }
     }
 }

@@ -1,15 +1,12 @@
-//
-//  HomePage.swift
-//  playingui
-//
-//  Created by Богдан Закусило on 09.05.2023.
-//
 import SwiftUI
 import CoreData
 
 struct HomePage: View {
     //@EnvironmentObject var model: DefautlModel
-    @StateObject var api = ApiCall(prompt: "Give me 3 food recipe ideas in a list based on those products [chicken, tomato sauce, pasta, cheese, mushrooms] keep it short", temperature: "0.7")
+    @StateObject var api = ApiCall(prompt: "Give me 5 recipe names in a unordered list using dots based on those products [chicken, tomato sauce, pasta, cheese, mushrooms] keep it short", temperature: "0.2")
+    
+    @State private var animate = false
+    @State private var launched = false
     
     var body: some View {
         NavigationView(){
@@ -23,6 +20,7 @@ struct HomePage: View {
                                 .font(.system(size: 48))
                         }
                         .padding(.vertical, 20)
+                        .opacity(animate ? 1.0 : 0.0)
 
 
                         VStack {
@@ -39,7 +37,9 @@ struct HomePage: View {
                                     ProgressView()
                                 )
                         }
+                        .opacity(animate ? 1.0 : 0.0)
                         .padding(.bottom, 20)
+                        
                         
                         VStack {
                             Text("Todays recommendation")
@@ -55,23 +55,39 @@ struct HomePage: View {
                                     if (api.response.isEmpty) {
                                         ProgressView()
                                     } else {
-                                        Text(api.response)
-                                            .fontWeight(.semibold)
-                                            .foregroundColor(Color.white)
-                                            .padding(10)
+                                        VStack {
+                                            Text(api.response)
+                                                .frame(maxWidth: .infinity, alignment: .leading)
+                                                .fontWeight(.medium)
+                                                .font(.system(size: 20))
+                                                .foregroundColor(Color.white)
+                                                .padding(10)
+                                            Spacer()
+                                        }
                                     }
                                 }
                         }
+                        .opacity(animate ? 1.0 : 0.0)
                         .padding(.bottom, 20)
                         Spacer()
                     }
                 }
                 .padding([.leading, .trailing])
                 .background(Color(red: 253, green: 255, blue: 252))
+                .onAppear {
+                    if (!animate){
+                        withAnimation(Animation.spring().speed(0.8)) {
+                            animate.toggle()
+                        }
+                    }
+                }
             }
         }
         .onAppear() {
-            api.fetchData()
+            if (!launched) {
+                api.fetchData()
+                launched.toggle()
+            }
         }
     }
 }

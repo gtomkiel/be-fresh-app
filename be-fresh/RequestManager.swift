@@ -1,21 +1,11 @@
 import Foundation
 
 struct Welcome : Codable {
-    let id, object: String?
-    let created: Int?
-    let model: String?
     let choices: [Choice]
 }
 
 struct Choice : Codable {
-    let message: Message
-    let finishReason: String?
-    let index: Int?
-}
-
-struct Message : Codable {
-    let role: String?
-    var content: String
+    let text: String
 }
 
 @MainActor class ApiCall: ObservableObject {
@@ -31,8 +21,8 @@ struct Message : Codable {
     }
     
     func fetchData() {
-        guard let url = URL(string: "https://api.openai.com/v1/chat/completions"),
-            let payload = "{\"model\": \"gpt-3.5-turbo\",\"messages\": [{\"role\": \"user\", \"content\": \"\(prompt)\"}],\"temperature\": 0.7}".data(using: .utf8) else
+        guard let url = URL(string: "https://api.openai.com/v1/completions"),
+            let payload = "{\"model\": \"text-davinci-003\",\"prompt\": \"\(prompt)\",\"max_tokens\": 1000,\"temperature\": \(temperature)}".data(using: .utf8) else
         {
             return
         }
@@ -40,7 +30,7 @@ struct Message : Codable {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         // Don't push api key to github btw
-        request.addValue("Bearer API-KEY-HERE", forHTTPHeaderField: "Authorization")
+        request.addValue("Bearer API-KEY-GOES-HERE", forHTTPHeaderField: "Authorization")
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = payload
 
@@ -51,16 +41,15 @@ struct Message : Codable {
                 DispatchQueue.main.async {
                     self.response = "Could not retrieve data..."
                 }
-                
                 return
             }
             
             do {
                 let message = try JSONDecoder().decode(Welcome.self, from: data)
                 DispatchQueue.main.async {
-                    print(message)
                     for choice in message.choices {
-                        self.response += choice.message.content + "\n"
+                        self.response += choice.text
+                        self.response = self.response.trimmingCharacters(in: .newlines)
                     }
                 }
             } catch {
@@ -72,3 +61,4 @@ struct Message : Codable {
         }.resume()
     }
 }
+

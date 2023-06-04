@@ -1,10 +1,3 @@
-//
-//  Notification.swift
-//  testNotifications
-//
-//  Created by Богдан Закусило on 28.04.2023.
-//
-
 import Foundation
 import UserNotifications
 
