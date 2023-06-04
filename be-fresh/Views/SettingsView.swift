@@ -30,6 +30,8 @@ struct SettingsView: View {
                         UserDefaults.standard.set(newValue, forKey: "RemoveRename")
                         print(newValue)
                     }
+                
+                
             
                 
                 Rectangle()
