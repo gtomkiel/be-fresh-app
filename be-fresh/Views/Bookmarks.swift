@@ -15,110 +15,41 @@ struct Bookmarks: View {
         VStack(spacing: 32) {
             ScrollView {
                 VStack(spacing: 32) {
-                    Text("Bookmarks")
-                        .font(.custom("Inter", size: 48))
-                        .fontWeight(.bold)
-                        .foregroundColor(Color.black)
-                        .frame(width: 317, height: 54)
-                        .padding(.leading, -10.0)
-                        .padding([.top, .trailing], 69)
-
-                    Text("Recipe")
-                        .font(.custom("Inter", size: 24))
-                        .fontWeight(.semibold)
-                        .foregroundColor(Color.black)
-                        .frame(width: 307, height: 29)
-                        .offset(x: -120, y: 0)
-
-                    Rectangle()
-                        .frame(width: 339, height: 104)
-                        .foregroundColor(Color(red: 129/255, green: 182/255, blue: 88/255))
-                        .cornerRadius(15)
-                        .overlay(
-                            TextField("Enter text", text: $text)
-                                .frame(width: 307, height: 29)
-                                .font(.custom("Inter", size: 18))
-                                .foregroundColor(.black)
-                                .padding(.horizontal, 20)
-                        )
-
-                    Text("Recipe")
-                        .font(.custom("Inter", size: 24))
-                        .fontWeight(.semibold)
-                        .foregroundColor(Color.black)
-                        .frame(width: 307, height: 29)
-                        .offset(x: -120, y: 0)
-
-                    Rectangle()
-                        .frame(width: 339, height: 104)
-                        .foregroundColor(Color(red: 129/255, green: 182/255, blue: 88/255))
-                        .cornerRadius(15)
-                        .overlay(
-                            TextField("Enter text", text: $text)
-                                .frame(width: 307, height: 29)
-                                .font(.custom("Inter", size: 18))
-                                .foregroundColor(.black)
-                                .padding(.horizontal, 20)
-                        )
+                    HStack {
+                        Text("Bookmarks")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .fontWeight(.heavy)
+                            .font(.system(size: 48))
+                            .padding(.vertical, 20)
+                    }
                     
-                    Text("Recipe")
-                        .font(.custom("Inter", size: 24))
-                        .fontWeight(.semibold)
-                        .foregroundColor(Color.black)
-                        .frame(width: 307, height: 29)
-                        .offset(x: -120, y: 0)
+                    VStack {
+                        Text("Recipe #1")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .fontWeight(.semibold)
+                            .font(.system(size: 24))
 
-                    Rectangle()
-                        .frame(width: 339, height: 104)
-                        .foregroundColor(Color(red: 129/255, green: 182/255, blue: 88/255))
-                        .cornerRadius(15)
-                        .overlay(
-                            TextField("Enter text", text: $text)
-                                .frame(width: 307, height: 29)
-                                .font(.custom("Inter", size: 18))
-                                .foregroundColor(.black)
-                                .padding(.horizontal, 20)
-                        )
+                        Rectangle()
+                            .frame(height: 104)
+                            .foregroundColor(Color("greenColor"))
+                            .cornerRadius(15)
+                    }
+                    
+                    VStack {
+                        Text("Recipe #2")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .fontWeight(.semibold)
+                            .font(.system(size: 24))
 
-                    Text("Recipe")
-                        .font(.custom("Inter", size: 24))
-                        .fontWeight(.semibold)
-                        .foregroundColor(Color.black)
-                        .frame(width: 307, height: 29)
-                        .offset(x: -120, y: 0)
-
-                    Rectangle()
-                        .frame(width: 339, height: 104)
-                        .foregroundColor(Color(red: 129/255,    green: 182/255, blue: 88/255))
-                        .cornerRadius(15)
-                        .overlay(
-                            TextField("Enter text", text: $text)
-                                .frame(width: 307, height: 29)
-                                .font(.custom("Inter", size: 18))
-                                .foregroundColor(.black)
-                                .padding(.horizontal, 20)
-                        )
+                        Rectangle()
+                            .frame(height: 104)
+                            .foregroundColor(Color("greenColor"))
+                            .cornerRadius(15)
+                    }
                 }
-                .padding(.top, -50)
-                .padding(.horizontal, 0)
             }
+            .padding([.leading, .trailing])
             Spacer()
-            
-            // Button
-            /*HStack{
-                Spacer()
-                Button(action: {
-                    self.isShowingSheet = true
-                }) {
-                    Image(systemName: "plus.circle.fill")
-                        .resizable()
-                        .frame(width: 64, height: 64)
-                        .foregroundColor(.black)
-                }
-                .padding()
-                .clipShape(Circle())
-                .shadow(radius: 10)
-            }*/
         }
     }
 }

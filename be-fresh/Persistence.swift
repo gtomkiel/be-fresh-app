@@ -41,6 +41,20 @@ struct PersistenceController {
         }
     }
     
+    func savePrName(product: Product, name: String){
+        let context = PersistenceController.shared.container.viewContext
+            context.perform {
+                product.productName = name
+                
+                do {
+                    try context.save()
+                    print("New product name saved successfully.")
+                } catch {
+                    print("Failed to save new product name: \(error.localizedDescription)")
+                }
+            }
+    }
+    
     func deleteoldProducts(){
         let request: NSFetchRequest<Product> = Product.fetchRequest()
         do {

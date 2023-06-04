@@ -1,7 +1,10 @@
 import SwiftUI
 import CoreData
+import Foundation
 
 struct ProductsView: View {
+    @State private var perCont = PersistenceController.shared
+    @State private var isEditing = false
     @State private var currentDate = Date()
     @Environment(\.managedObjectContext) var viewContext
     @State private var isShowingSheet = false
@@ -9,44 +12,57 @@ struct ProductsView: View {
         sortDescriptors: [NSSortDescriptor(keyPath: \Product.productName, ascending: true)],
         animation: .default)
     private var products: FetchedResults<Product>
+    @State private var isSwiped = false
+    @GestureState private var dragOffset: CGSize = .zero
     
     var body: some View {
-            // basic layout
         NavigationView(){
             GeometryReader { geometry in
                 ZStack {
                     VStack(alignment: .leading) {
-                        VStack(alignment: .leading) {
-                            Text("Your")
-                            Text("Products")
+                        HStack {
+                            Text("Your products")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .fontWeight(.heavy)
+                                .font(.system(size: 48))
                         }
-                        .font(.system(size: 45))
-                        .fontWeight(.heavy)
-                        .padding([.top, .bottom])
+                        .padding(.vertical, 20)
                         
                         Text("List of items")
-                            .font(.title)
-                            .fontWeight(.medium)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .fontWeight(.semibold)
+                            .font(.system(size: 24))
                         
                         ZStack(alignment: .leading) {
-                            RoundedRectangle(cornerRadius: 10)
+                            RoundedRectangle(cornerRadius: 15)
                                 .fill(Color(red: 0.506, green: 0.718, blue: 0.345))
                                 .shadow(radius: 5)
                             
                             VStack(alignment: .leading) {
-                                // item list
-//                                List(products, id: \.self) { product in
-//                                    ListItemView(name: String(product.productName), date: String(product.expirationDate), showLine: true)
-//                                    }
                                 ForEach(products) { product in
-                                    ListItemView(name: product.productName ?? "error", date: String(describing: product.expirationDate), showLine: true)
+                                    HStack{
+                                        ListItemView(name: product.productName ?? "error", date: String(describing: product.expirationDate!), showLine: true, prdct: product)
+//                                        Button(action: {
+//                                            PersistenceController.shared.deleteProduct(product)
+//                                        }) {
+//                                            HStack {
+//                                                Image(systemName: "minus.circle")
+//                                                Text(isEditing ? "Done" : "Edit")
+//                                            }
+//                                            .font(.title2)
+//                                            .foregroundColor(.red)
+//                                            .padding()
+//                                            .background(Color.blue)
+//                                            .cornerRadius(8)
+//                                            .frame(width: 50, height: 25)
+//                                        }
+
+                                    }
                                 }
                             Spacer()
                             }
-                            .padding([.top, .leading, .trailing])
                         }
                     }
-                    .padding()
                     
                     // button
                     VStack() {
@@ -54,18 +70,7 @@ struct ProductsView: View {
                         HStack {
                             Spacer()
                             Button(action: {
-                                let calendar = Calendar.current
-                                
-                                // Define the time interval for one hour
-                                let oneHour: TimeInterval = 3600
-                                
-                                // Add one hour to the current date
-                                if let newDate = calendar.date(byAdding: .second, value: Int(oneHour), to: currentDate) {
-                                    // Update the current date
-                                    currentDate = newDate
-                                }
                                 addItem()
-                                
                             }) {
                                 Image(systemName: "plus.circle.fill")
                                     .resizable()
@@ -78,7 +83,7 @@ struct ProductsView: View {
                         }
                     }
                 }
-                // overlay
+                .padding([.leading, .trailing])
                 .sheet(isPresented: $isShowingSheet) {
                     VStack(alignment: .leading) {
                         Text("Add Product")
@@ -102,27 +107,29 @@ struct ProductsView: View {
     }
     private func addItem() {
         withAnimation {
-            let newProduct = Product(context: viewContext)
-            newProduct.productName = "New Product"
-            newProduct.expirationDate = Date()
-            
+            var currentDate = Date()
 
+            let calendar = Calendar.current
+            let oneHour: TimeInterval = 3600
+
+            if let newDate = calendar.date(byAdding: .second, value: Int(oneHour), to: currentDate) {
+                currentDate = newDate
+                print(currentDate)
+            }
+            let newProduct = Product(context: viewContext)
+            newProduct.productName = NameParser().getNameFromJSON()
+            newProduct.expirationDate = currentDate
+            Notification().sendNotification(date: currentDate, type: "time", title: "Product expiration", body: "Product \(String(describing: newProduct.productName!)) is expiring today")
+            print("\(String(describing: newProduct.productName))")
             do {
                 try viewContext.save()
             } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
                 let nsError = error as NSError
                 fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
             }
         }
     }
     
-//    func getFirstTime() -> Bool{
-//        UserDefaults.standard.set(true, forKey: "FirstTime")
-//        return UserDefaults.standard.bool(forKey: "FirstTime")
-//    }
-
     private func deleteItems(offsets: IndexSet) {
         withAnimation {
             offsets.map { products[$0] }.forEach(viewContext.delete)
@@ -130,8 +137,6 @@ struct ProductsView: View {
             do {
                 try viewContext.save()
             } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
                 let nsError = error as NSError
                 fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
             }
