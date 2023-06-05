@@ -3,6 +3,7 @@ import SwiftUI
 struct RecipesView: View {
     @StateObject var api = ApiCall(prompt: "Give me formatted recipe based on those products [chicken, tomato sauce, pasta, cheese, mushrooms]", temperature: "0.7")
     
+    @State private var text = false
     @State private var launched = false
     
     var body: some View {
@@ -54,6 +55,14 @@ struct RecipesView: View {
                                 .cornerRadius(15)
                                 .shadow(radius: 5)
                         )
+                        .opacity(text ? 1.0 : 0.0)
+                        .onAppear {
+                            if (!text){
+                                withAnimation(Animation.spring().speed(0.8)) {
+                                    text.toggle()
+                                }
+                            }
+                        }
                 }
             }
             Spacer()
