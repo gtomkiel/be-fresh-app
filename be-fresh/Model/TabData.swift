@@ -1,5 +1,5 @@
 import Foundation
-/*import SwiftUI
+import SwiftUI
 import Combine
 import CoreData
 
@@ -10,7 +10,7 @@ class DefautlModel: ObservableObject {
     @Published var showLogin = false
     @Published var showRegister = false
     
-    //@Published var selectedTab : TabItem = .home
+    @Published var selectedTab : TabItem = .home
     
     @Published var first = UserDefaults.standard.bool(forKey: "FirstTime")
 }
@@ -35,7 +35,7 @@ enum PageType {
     case login, register, main
 }
 
-/*
+
 enum TabItem : Hashable, Identifiable {
     case products
     case recipes
@@ -44,6 +44,3 @@ enum TabItem : Hashable, Identifiable {
     case settings
     var id: TabItem { self }
 }
-*/
-*/
-
