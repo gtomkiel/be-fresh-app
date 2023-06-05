@@ -2,6 +2,11 @@ import SwiftUI
 import CoreData
 
 struct HomePage: View {
+    @Environment(\.managedObjectContext) var viewContext
+    @FetchRequest(
+        sortDescriptors: [NSSortDescriptor(keyPath: \Product.productName, ascending: true)],
+        animation: .default)
+    private var products: FetchedResults<Product>
     //@EnvironmentObject var model: DefautlModel
     @StateObject var api = ApiCall(prompt: "Give me 5 recipe names in a unordered list using dots based on those products [chicken, tomato sauce, pasta, cheese, mushrooms] keep it short", temperature: "0.2")
     
@@ -34,7 +39,16 @@ struct HomePage: View {
                                 .cornerRadius(15)
                                 .shadow(radius: 5)
                                 .overlay(
-                                    ProgressView()
+                                    VStack(alignment: .leading) {
+                                        ForEach(products) { product in
+                                            HStack{
+                                                if calculateDate() <= product.expirationDate!{
+                                                    ListItemView(name: product.productName ?? "error", date: String(describing: product.expirationDate!), showLine: true, prdct: product, modification: false)
+                                                }
+                                            }
+                                        }
+                                    Spacer()
+                                    }
                                 )
                         }
                         .opacity(animate ? 1.0 : 0.0)
@@ -89,6 +103,20 @@ struct HomePage: View {
                 launched.toggle()
             }
         }
+    }
+}
+
+func calculateDate()->Date{
+    let currentDate = Date()
+    let calendar = Calendar.current
+
+    var dateComponents = DateComponents()
+    dateComponents.day = UserDefaults.standard.integer(forKey: "ExpireDate")
+
+    if let futureDate = calendar.date(byAdding: dateComponents, to: currentDate) {
+        return futureDate
+    } else {
+        return Date()
     }
 }
 

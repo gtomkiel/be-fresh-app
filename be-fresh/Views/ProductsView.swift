@@ -45,7 +45,7 @@ struct ProductsView: View {
                             VStack(alignment: .leading) {
                                 ForEach(products) { product in
                                     HStack{
-                                        ListItemView(name: product.productName ?? "error", date: String(describing: product.expirationDate!), showLine: true, prdct: product)
+                                        ListItemView(name: product.productName ?? "error", date: String(describing: product.expirationDate!), showLine: true, prdct: product, modification: true)
                                     }
                                 }
                             Spacer()
@@ -115,7 +115,7 @@ struct ProductsView: View {
             var currentDate = Date()
 
             let calendar = Calendar.current
-            let oneHour: TimeInterval = 3600
+            let oneHour: TimeInterval = 360000
 
             if let newDate = calendar.date(byAdding: .second, value: Int(oneHour), to: currentDate) {
                 currentDate = newDate
