@@ -27,7 +27,6 @@ struct SettingsView: View {
                         Toggle("Rename Delete Products", isOn: $showStatus)
                     }.onChange(of: showStatus) { newValue in
                         UserDefaults.standard.set(newValue, forKey: "RemoveRename")
-                        print(newValue)
                     }
                 
                 Rectangle()
