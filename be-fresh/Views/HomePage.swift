@@ -2,7 +2,7 @@ import SwiftUI
 import CoreData
 
 struct HomePage: View {
-    //@EnvironmentObject var model: DefautlModel
+    @EnvironmentObject var model: DefautlModel // MARK -- DONT DELETE
     @StateObject var api = ApiCall(prompt: "Give me 5 recipe names in a unordered list using dots based on those products [chicken, tomato sauce, pasta, cheese, mushrooms] keep it short", temperature: "0")
     
     @State private var animate = false
@@ -15,13 +15,16 @@ struct HomePage: View {
                 ZStack {
                     VStack {
                         HStack {
-                            Text("Hello user")
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .fontWeight(.heavy)
-                                .font(.system(size: 48))
+                            if (model.isLoggedIn && model.currentUser != nil) {
+                                Text("Hello! " + model.currentUser!.firstName!)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .fontWeight(.heavy)
+                                    .font(.system(size: 48))
+                            }
                         }
                         .padding(.vertical, 20)
                         .opacity(animate ? 1.0 : 0.0)
+
 
                         ScrollView() {
                             VStack {

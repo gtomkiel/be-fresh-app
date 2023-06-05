@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct SettingsView: View {
+    @EnvironmentObject var defaultModel: DefautlModel
+    
     @State private var showStatus = UserDefaults.standard.bool(forKey: "RemoveRename")
     @State private var showStatus1 = true
     @State private var showStatus2 = true
@@ -27,6 +29,7 @@ struct SettingsView: View {
                         Toggle("Rename Delete Products", isOn: $showStatus)
                     }.onChange(of: showStatus) { newValue in
                         UserDefaults.standard.set(newValue, forKey: "RemoveRename")
+                        print(newValue)
                     }
                 
                 Rectangle()
@@ -68,6 +71,24 @@ struct SettingsView: View {
                     .overlay {
                         Toggle("Toggle option 5", isOn: $showStatus5)
                     }
+                
+                Spacer()
+                
+                Button {
+//                    UserDefaults.standard.set(true, forKey: "FirstTime")
+                    UserDefaults.standard.set(false, forKey: "isLoggedIn")
+                    UserDefaults.standard.set("", forKey: "LoggedInUserEmail")
+                    defaultModel.isLoggedIn = false
+//                    defaultModel.first = false
+                } label: {
+                    Text("Logout")
+                        .foregroundColor(Color.white)
+                }
+                .frame(height: 50)
+                .frame(maxWidth: .infinity)
+                .background(Color.red)
+                .cornerRadius(10)
+                .padding()
             }
             .scrollContentBackground(.hidden)
         }

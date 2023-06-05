@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct ContentView: View {
+    @EnvironmentObject var defaultModel: DefautlModel
+    
     var body: some View {
         TabView {
             HomePage()
@@ -30,6 +32,7 @@ struct ContentView: View {
                 }
         }
         .accentColor(Color.init("greenColor"))
+        .environmentObject(defaultModel) // MARK -- DONT DELETE
     }
 }
 
