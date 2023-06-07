@@ -2,6 +2,11 @@ import SwiftUI
 import CoreData
 
 struct HomePage: View {
+    @Environment(\.managedObjectContext) var viewContext
+    @FetchRequest(
+        sortDescriptors: [NSSortDescriptor(keyPath: \Product.productName, ascending: true)],
+        animation: .default)
+    private var products: FetchedResults<Product>
     //@EnvironmentObject var model: DefautlModel
     @StateObject var api = ApiCall(prompt: "Give me 5 recipe names in a unordered list using dots based on those products [chicken, tomato sauce, pasta, cheese, mushrooms] keep it short", temperature: "0")
     
@@ -22,74 +27,83 @@ struct HomePage: View {
                         }
                         .padding(.vertical, 20)
                         .opacity(animate ? 1.0 : 0.0)
-
-                        ScrollView() {
-                            VStack {
-                                Text("Upcoming expire dates")
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .fontWeight(.semibold)
-                                    .font(.system(size: 24))
-                                Rectangle()
-                                    .foregroundColor(Color("greenColor"))
-                                    .frame(height: 264)
-                                    .cornerRadius(15)
-                                    .shadow(radius: 5)
-                                    .overlay(
-                                        ProgressView()
-                                    )
-                            }
-                            .opacity(animate ? 1.0 : 0.0)
-                            .padding(.bottom, 20)
-                            
-                            
-                            VStack {
-                                Text("Todays recommendation")
-                                    .fontWeight(.semibold)
-                                    .font(.system(size: 24))
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                Rectangle()
-                                    .foregroundColor(Color("greenColor"))
-                                    .frame(height: 264)
-                                    .cornerRadius(15)
-                                    .shadow(radius: 5)
-                                    .overlay{
-                                        if (api.response.isEmpty) {
-                                            ProgressView()
-                                        } else {
-                                            VStack {
-                                                Text(api.response)
-                                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                                    .italic()
-                                                    .font(.system(size: 20, weight: .bold))
-                                                    .foregroundColor(Color.white)
-                                                    .lineSpacing(25)
-                                                    .padding(15)
-                                                Spacer()
+                        
+                        //<<<<<<< HEAD
+                        
+                        VStack {
+                            Text("Upcoming expire dates")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .fontWeight(.semibold)
+                                .font(.system(size: 24))
+                            Rectangle()
+                                .foregroundColor(Color("greenColor"))
+                                .frame(height: 264)
+                                .cornerRadius(15)
+                                .shadow(radius: 5)
+                                .overlay(
+                                    VStack(alignment: .leading) {
+                                        ForEach(products) { product in
+                                            HStack{
+                                                if calculateDate() <= product.expirationDate!{
+                                                    ListItemView(name: product.productName ?? "error", date: String(describing: product.expirationDate!), showLine: true, prdct: product, modification: false)
+                                                }
                                             }
-                                            .opacity(text ? 1.0 : 0.0)
-                                            .onAppear {
-                                                if (!text){
-                                                    withAnimation(Animation.spring().speed(0.8)) {
-                                                        text.toggle()
-                                                    }
+                                        }
+                                        Spacer()
+                                    }
+                                )
+                        }
+                        .opacity(animate ? 1.0 : 0.0)
+                        .padding(.bottom, 20)
+                        
+                        
+                        VStack {
+                            Text("Todays recommendation")
+                                .fontWeight(.semibold)
+                                .font(.system(size: 24))
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            Rectangle()
+                                .foregroundColor(Color("greenColor"))
+                                .frame(height: 264)
+                                .cornerRadius(15)
+                                .shadow(radius: 5)
+                                .overlay{
+                                    if (api.response.isEmpty) {
+                                        ProgressView()
+                                    } else {
+                                        VStack {
+                                            Text(api.response)
+                                                .frame(maxWidth: .infinity, alignment: .leading)
+                                                .italic()
+                                                .font(.system(size: 20, weight: .bold))
+                                                .foregroundColor(Color.white)
+                                                .lineSpacing(25)
+                                                .padding(15)
+                                            Spacer()
+                                        }
+                                        .opacity(text ? 1.0 : 0.0)
+                                        .onAppear {
+                                            if (!text){
+                                                withAnimation(Animation.spring().speed(0.8)) {
+                                                    text.toggle()
                                                 }
                                             }
                                         }
                                     }
-                            }
-                            .opacity(animate ? 1.0 : 0.0)
-                            .padding(.bottom, 20)
-                            Spacer()
+                                }
                         }
+                        .opacity(animate ? 1.0 : 0.0)
+                        .padding(.bottom, 20)
+                        Spacer()
                     }
                 }
-                .padding([.leading, .trailing])
-                .background(Color(red: 253, green: 255, blue: 252))
-                .onAppear {
-                    if (!animate){
-                        withAnimation(Animation.spring().speed(0.8)) {
-                            animate.toggle()
-                        }
+            }
+            .padding([.leading, .trailing])
+            .background(Color(red: 253, green: 255, blue: 252))
+            .onAppear {
+                if (!animate){
+                    withAnimation(Animation.spring().speed(0.8)) {
+                        animate.toggle()
                     }
                 }
             }
@@ -100,6 +114,20 @@ struct HomePage: View {
                 launched.toggle()
             }
         }
+    }
+}
+
+func calculateDate()->Date{
+    let currentDate = Date()
+    let calendar = Calendar.current
+    
+    var dateComponents = DateComponents()
+    dateComponents.day = UserDefaults.standard.integer(forKey: "ExpireDate")
+    
+    if let futureDate = calendar.date(byAdding: dateComponents, to: currentDate) {
+        return futureDate
+    } else {
+        return Date()
     }
 }
 
