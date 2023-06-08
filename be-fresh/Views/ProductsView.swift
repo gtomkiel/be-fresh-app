@@ -1,6 +1,6 @@
-import SwiftUI
 import CoreData
 import Foundation
+import SwiftUI
 
 struct ProductsView: View {
     @State private var isManually = false
@@ -17,10 +17,10 @@ struct ProductsView: View {
     private var products: FetchedResults<Product>
     @State private var isSwiped = false
     @GestureState private var dragOffset: CGSize = .zero
-    
+
     var body: some View {
-        NavigationView(){
-            GeometryReader { geometry in
+        NavigationView {
+            GeometryReader { _ in
                 ZStack {
                     VStack(alignment: .leading) {
                         HStack {
@@ -30,35 +30,34 @@ struct ProductsView: View {
                                 .font(.system(size: 48))
                         }
                         .padding(.vertical, 20)
-                        
+
                         Text("List of items")
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .fontWeight(.semibold)
                             .font(.system(size: 24))
-                        
+
                         ZStack(alignment: .topLeading) {
                             RoundedRectangle(cornerRadius: 15)
                                 .fill(Color(red: 0.506, green: 0.718, blue: 0.345))
                                 .shadow(radius: 5)
                                 .frame(height: 602)
-                            
+
                             VStack(alignment: .leading) {
                                 ForEach(products) { product in
-                                    HStack{
+                                    HStack {
                                         ListItemView(name: product.productName ?? "error", date: String(describing: product.expirationDate!), showLine: true, prdct: product, modification: true)
                                     }
                                 }
-                            Spacer()
+                                Spacer()
                             }
                         }
                     }
-                    
-                    VStack() {
+
+                    VStack {
                         Spacer()
                         HStack {
                             Spacer()
                             Button(action: {
-                                addItem()
                                 isShowingSheet = true
                             }) {
                                 Image(systemName: "plus.circle.fill")
@@ -74,42 +73,124 @@ struct ProductsView: View {
                 }
                 .padding([.leading, .trailing])
                 .sheet(isPresented: $isShowingSheet) {
-                    VStack(alignment: .leading) {
+                    VStack {
                         Text("Add Product")
-                            .font(.largeTitle)
-                            .fontWeight(.bold)
-                        Button("Add manually"){
-                            isShowingSheet = false
-                            isManually = true
-                        }
+                            .fontWeight(.heavy)
+                            .font(.system(size: 36))
+                            .padding(.bottom, 20)
                         Spacer()
-                        Button("Scan the barcode"){
-                            isShowingSheet = false
-                            isBarcodeSheet = true
-                        }
-                
-                        
-//                        RoundedRectangle(cornerRadius: 10)
-//                            .fill(Color(red: 0.506, green: 0.718, blue: 0.345))
-//                            .shadow(radius: 5)
-//
-//                        RoundedRectangle(cornerRadius: 10)
-//                            .fill(Color(red: 0.506, green: 0.718, blue: 0.345))
-//                            .shadow(radius: 5)
-//                            .frame(height: 50)
+                        Spacer()
+                        Rectangle()
+                            .foregroundColor(Color("greenColor"))
+                            .cornerRadius(15)
+                            .shadow(radius: 5)
+                            .overlay {
+                                Button("Input manually") {
+                                    isShowingSheet = false
+                                    isManually = true
+                                    isBarcodeSheet = false
+                                }
+                                .foregroundColor(.white)
+                                .fontWeight(.semibold)
+                                .font(.system(size: 24))
+                            }
+                        Rectangle()
+                            .foregroundColor(Color("greenColor"))
+                            .cornerRadius(15)
+                            .shadow(radius: 5)
+                            .overlay {
+                                Button("Scan barecode") {
+                                    isShowingSheet = false
+                                    isManually = false
+                                    isBarcodeSheet = true
+                                }
+                                .foregroundColor(.white)
+                                .fontWeight(.semibold)
+                                .font(.system(size: 24))
+                            }
+                        Rectangle()
+                            .foregroundColor(Color("greenColor"))
+                            .cornerRadius(15)
+                            .shadow(radius: 5)
+                            .overlay {
+                                Button("Testing add") {
+                                    addItem()
+                                    isShowingSheet = false
+                                    isManually = false
+                                    isBarcodeSheet = false
+                                }
+                                .foregroundColor(.white)
+                                .fontWeight(.semibold)
+                                .font(.system(size: 24))
+                            }
                     }
                     .padding()
+                    .presentationDetents([.fraction(0.35)])
+                }
+                .sheet(isPresented: $isManually) {
+                    VStack {
+                        Text("Add Product")
+                            .fontWeight(.heavy)
+                            .font(.system(size: 36))
+                            .padding(.bottom, 20)
+                        Spacer()
+                        Spacer()
+                        Rectangle()
+                            .foregroundColor(Color("greenColor"))
+                            .cornerRadius(15)
+                            .shadow(radius: 5)
+                            .overlay {
+                                Text("Product name")
+                                    .foregroundColor(.white)
+                                    .fontWeight(.semibold)
+                                    .font(.system(size: 24))
+                                    .italic()
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(.leading)
+                            }
+                        Rectangle()
+                            .foregroundColor(Color("greenColor"))
+                            .cornerRadius(15)
+                            .shadow(radius: 5)
+                            .overlay {
+                                Text("Expiry date")
+                                    .foregroundColor(.white)
+                                    .fontWeight(.semibold)
+                                    .font(.system(size: 24))
+                                    .italic()
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(.leading)
+                            }
+                        Rectangle()
+                            .foregroundColor(Color("greenColor"))
+                            .cornerRadius(15)
+                            .shadow(radius: 5)
+                            .overlay {
+                                Button("Testing add") {
+                                    addItem()
+                                    isShowingSheet = false
+                                    isManually = false
+                                    isBarcodeSheet = false
+                                }
+                                .foregroundColor(.white)
+                                .fontWeight(.semibold)
+                                .font(.system(size: 24))
+                            }
+                    }
+                    .padding()
+                    .presentationDetents([.fraction(0.35)])
+                }
+                .sheet(isPresented: $isBarcodeSheet) {
+                    VStack {
+                        Text("barecode will be here instead")
+                        Spacer()
+                    }
                     .presentationDetents([.fraction(0.5)])
-                }
-                .sheet(isPresented: $isManually){
-                    Text("manually")
-                }
-                .sheet(isPresented: $isBarcodeSheet){
-                    Text("barcode")
                 }
             }
         }
     }
+
     private func addItem() {
         withAnimation {
             var currentDate = Date()
@@ -134,7 +215,7 @@ struct ProductsView: View {
             }
         }
     }
-    
+
     private func deleteItems(offsets: IndexSet) {
         withAnimation {
             offsets.map { products[$0] }.forEach(viewContext.delete)
