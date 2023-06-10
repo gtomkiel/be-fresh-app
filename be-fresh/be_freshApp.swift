@@ -8,7 +8,7 @@ struct be_freshApp: App {
     init() {
         persistenceController.deleteoldProducts()
         let parser = ApiParser()
-        parser.getName(barcode: 7548121774033) { title in
+        parser.getName(barcode: 9181991172523) { title in
             if let title = title {
                 // Use the title here
                  print("Title: \(title)")
