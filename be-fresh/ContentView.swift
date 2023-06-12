@@ -4,32 +4,32 @@ struct ContentView: View {
     var body: some View {
         TabView {
             HomePage()
-                .tabItem() {
+                .tabItem {
                     Image(systemName: "house")
                     Text("Home")
                 }
             ProductsView()
-                .tabItem() {
+                .tabItem {
                     Image(systemName: "refrigerator")
                     Text("Products")
                 }
-            RecipesView()
-                .tabItem() {
+            RecipeList()
+                .tabItem {
                     Image(systemName: "frying.pan")
                     Text("Recipes")
                 }
             Bookmarks()
-                .tabItem() {
+                .tabItem {
                     Image(systemName: "bookmark")
                     Text("Bookmarks")
                 }
             SettingsView()
-                .tabItem() {
+                .tabItem {
                     Image(systemName: "gearshape")
                     Text("Settings")
                 }
         }
-        .accentColor(Color.init("greenColor"))
+        .accentColor(Color("greenColor"))
     }
 }
 
