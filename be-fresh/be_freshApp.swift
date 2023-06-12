@@ -7,15 +7,6 @@ struct be_freshApp: App {
         
     init() {
         persistenceController.deleteoldProducts()
-        var responseString: String? = nil
-
-        // Send the command
-        let command = "startBarcode"
-        Server.shared.sendCommandToServer(command: command) { string in
-            // Process the received string here
-            responseString = string
-            print(responseString ?? "error ocured")
-        }
     }
 
     var body: some Scene {
