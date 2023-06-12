@@ -9,6 +9,7 @@ struct ProductsView: View {
     @State private var perCont = PersistenceController.shared
     @State private var isEditing = false
     @State private var currentDate = Date()
+    @State private var isErrorSheet = false
     @Environment(\.managedObjectContext) var viewContext
     @State private var isShowingSheet = false
     @FetchRequest(
@@ -103,6 +104,30 @@ struct ProductsView: View {
                                     isShowingSheet = false
                                     isManually = false
                                     isBarcodeSheet = true
+                                    print("barcode stuff is running")
+                                    var responseString: String? = nil
+
+                                    // Send the command
+                                    let command = "startBarcode"
+                                    Server.shared.sendCommandToServer(command: command) { string in
+                                        // Process the received string here
+                                    responseString = string
+                                    print(responseString ?? "error ocured")
+                                        if let responseString = responseString{
+                                            if responseString != ""{
+                                                addItem(nameFromBarcode: responseString)
+                                                isShowingSheet = false
+                                                isManually = false
+                                                isBarcodeSheet = false
+                                            }
+                                            else{
+                                                isShowingSheet = false
+                                                isManually = false
+                                                isBarcodeSheet = false
+                                                isErrorSheet = true
+                                            }
+                                        }
+                                    }
                                 }
                                 .foregroundColor(.white)
                                 .fontWeight(.semibold)
@@ -114,7 +139,7 @@ struct ProductsView: View {
                             .shadow(radius: 5)
                             .overlay {
                                 Button("Testing add") {
-                                    addItem()
+                                    addItem(nameFromBarcode:  "Test shit idk")
                                     isShowingSheet = false
                                     isManually = false
                                     isBarcodeSheet = false
@@ -167,7 +192,7 @@ struct ProductsView: View {
                             .shadow(radius: 5)
                             .overlay {
                                 Button("Testing add") {
-                                    addItem()
+                                    addItem(nameFromBarcode: "Test Name")
                                     isShowingSheet = false
                                     isManually = false
                                     isBarcodeSheet = false
@@ -187,11 +212,14 @@ struct ProductsView: View {
                     }
                     .presentationDetents([.fraction(0.5)])
                 }
+                .sheet(isPresented: $isErrorSheet){
+                    Text("No such product in the database")
+                }
             }
         }
     }
 
-    private func addItem() {
+    private func addItem(nameFromBarcode: String) {
         withAnimation {
             var currentDate = Date()
 
@@ -203,7 +231,7 @@ struct ProductsView: View {
                 print(currentDate)
             }
             let newProduct = Product(context: viewContext)
-            newProduct.productName = NameParser().getNameFromJSON()
+            newProduct.productName = nameFromBarcode
             newProduct.expirationDate = currentDate
             Notification().sendNotification(date: currentDate, type: "time", title: "Product expiration", body: "Product \(String(describing: newProduct.productName!)) is expiring today")
             print("\(String(describing: newProduct.productName))")
