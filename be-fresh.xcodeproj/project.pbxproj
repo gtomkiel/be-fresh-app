@@ -27,6 +27,7 @@
 		646B5AF52A13728D00D3C6DB /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 646B5AF42A13728D00D3C6DB /* Preview Assets.xcassets */; };
 		646B5AF72A13728D00D3C6DB /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 646B5AF62A13728D00D3C6DB /* Persistence.swift */; };
 		646B5AFA2A13728D00D3C6DB /* be_fresh.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 646B5AF82A13728D00D3C6DB /* be_fresh.xcdatamodeld */; };
+		CE9D36D72A370B7E00A07EE1 /* RecipeList.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9D36D62A370B7E00A07EE1 /* RecipeList.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -51,6 +52,7 @@
 		646B5AF42A13728D00D3C6DB /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		646B5AF62A13728D00D3C6DB /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
 		646B5AF92A13728D00D3C6DB /* be_fresh.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = be_fresh.xcdatamodel; sourceTree = "<group>"; };
+		CE9D36D62A370B7E00A07EE1 /* RecipeList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeList.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,6 +93,7 @@
 				6420A0262A273731007226C6 /* ProductsView.swift */,
 				6420A0282A273742007226C6 /* RecipesView.swift */,
 				6420A02A2A273750007226C6 /* SettingsView.swift */,
+				CE9D36D62A370B7E00A07EE1 /* RecipeList.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -227,6 +230,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				640292DB2A2BEE57001FF1AB /* RequestManager.swift in Sources */,
+				CE9D36D72A370B7E00A07EE1 /* RecipeList.swift in Sources */,
 				646B5AF72A13728D00D3C6DB /* Persistence.swift in Sources */,
 				6420A0232A273704007226C6 /* ListItemView.swift in Sources */,
 				6420A0312A2737C5007226C6 /* TabData.swift in Sources */,
