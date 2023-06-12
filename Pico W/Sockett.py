@@ -26,7 +26,7 @@ print(f'Connected on {ip}')
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-server_address = (ip, 857)
+server_address = (ip, 851)
 print(sys.stderr, 'starting up on %s port %s' % server_address)
 sock.bind(server_address)
 
@@ -41,19 +41,23 @@ while True:
         data = connection.recv(1024).decode()
         if "startBarcode" in data:
             print("yeaaaa connec")
-            sleep(3)
             ini_name = wConnect()
-            fin_name = ''
-            if ',' in ini_name:
-                str_name = ini_name.split(",")
-                fin_name = str_name[0] + str_name[1]
+            print(ini_name)
+            if "API request failed" in ini_name:
+                error = "404Error"
+                response = "HTTP/1.1 200 OK\r\nContent-Length: \r\n\r\n{}".format(error)
+                connection.sendall(response.encode("utf-8"))
+                continue
             else:
-                fin_name = ini_name
-            response = "HTTP/1.1 200 OK\r\nContent-Length: {}\r\n\r\n{}".format(len(fin_name), fin_name)
-            
-            connection.sendall(response.encode("utf-8"))
-            print("send")
-            connection.close()
-            break
+                fin_name = ''
+                if ',' in ini_name:
+                    str_name = ini_name.split(",")
+                    fin_name = str_name[0] + str_name[1]
+                else:
+                    fin_name = ini_name
+                response = "HTTP/1.1 200 OK\r\nContent-Length: {}\r\n\r\n{}".format(len(fin_name), fin_name)
+                
+                connection.sendall(response.encode("utf-8"))
+                continue
     finally:
         connection.close()

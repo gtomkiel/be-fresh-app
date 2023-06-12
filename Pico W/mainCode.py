@@ -12,7 +12,7 @@ uart.init(bits=8, parity=None, stop=1)
 
 print(uart)
 
-API_KEY= "f5tyxo0dbzw2fcfqn6hqvm9uehp4s2"
+API_KEY= "npuhqctdgtlsjx45h6rma6c6b44y6c"
 
 #wConnect()
 ssid = "Galaxy M310830"
@@ -45,7 +45,7 @@ def wConnect():
 
             print(type(barcode))
             
-            API_ENDPOINT= "https://api.barcodelookup.com/v3/products?formatted=y&key=f5tyxo0dbzw2fcfqn6hqvm9uehp4s2&barcode=" + barcode
+            API_ENDPOINT= "https://api.barcodelookup.com/v3/products?formatted=y&key=npuhqctdgtlsjx45h6rma6c6b44y6c&barcode=" + barcode
             print(barcode)
             print(API_ENDPOINT)
           
@@ -53,11 +53,11 @@ def wConnect():
             #parsed_url = uurlparse.urlparse(url)
             #query_params = uurlparse.parse_qs(parsed_url.query)
             #print(query_params.text)
-            url = "https://api.barcodelookup.com/v3/products?formatted=y&key=f5tyxo0dbzw2fcfqn6hqvm9uehp4s2&barcode={}".format(barcode)
+            url = "https://api.barcodelookup.com/v3/products?formatted=y&key=npuhqctdgtlsjx45h6rma6c6b44y6c&barcode={}".format(barcode)
             print()
             print("-"*20)
             print (url)
-            time.sleep(5)
+            #time.sleep(5)
             response = urequests.get(API_ENDPOINT)
             print(type(barcode))
             print(barcode)
@@ -74,15 +74,19 @@ def wConnect():
                 print(data)
                 with open("product.json", "w") as file:
                     ujson.dump(output_data, file)
+                print("returning result...")
+                return result
             else:
                 print("Error: API request failed with status code", response.status_code)
-                print(response.text)
+                return "Error: API request failed with status code"
         # Display or use the product information as needed
        #print(res + ' is result')
        #res.strip("b'")
        #print(res)
 
-try:
-    wConnect() 
-except KeyboardInterrupt:
-    machine.reset()
+#try:
+ #   wConnect() 
+#except KeyboardInterrupt:
+ #   machine.reset()
+
+
