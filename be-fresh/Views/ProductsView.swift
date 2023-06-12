@@ -215,7 +215,32 @@ struct ProductsView: View {
             }
         }
     }
+    
+    private func addItemByName(date: Date, name: String) {
+        withAnimation {
+            var currentDate = Date()
 
+            let calendar = Calendar.current
+            let oneHour: TimeInterval = 360000
+
+            if let newDate = calendar.date(byAdding: .second, value: Int(oneHour), to: currentDate) {
+                currentDate = newDate
+                print(currentDate)
+            }
+            let newProduct = Product(context: viewContext)
+            newProduct.productName = NameParser().getNameFromJSON()
+            newProduct.expirationDate = currentDate
+            Notification().sendNotification(date: currentDate, type: "time", title: "Product expiration", body: "Product \(String(describing: newProduct.productName!)) is expiring today")
+            print("\(String(describing: newProduct.productName))")
+            do {
+                try viewContext.save()
+            } catch {
+                let nsError = error as NSError
+                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+            }
+        }
+    }
+    
     private func deleteItems(offsets: IndexSet) {
         withAnimation {
             offsets.map { products[$0] }.forEach(viewContext.delete)
