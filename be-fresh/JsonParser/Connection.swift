@@ -6,7 +6,7 @@ class Server{
     
     func sendCommandToServer(command: String, completion: @escaping (String?) -> Void) {
         
-        let serverURL = URL(string: "http://192.168.198.217:851")!
+        let serverURL = URL(string: "http://192.168.198.217:852")!
         
         let serverURLWithCommand = serverURL.appendingPathComponent(command)
         
@@ -39,9 +39,5 @@ class Server{
             }
         }
         task.resume()
-    }
-    
-    func connectToServer(){
-        
     }
 }
