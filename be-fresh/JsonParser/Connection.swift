@@ -40,8 +40,4 @@ class Server{
         }
         task.resume()
     }
-    
-    func connectToServer(){
-        
-    }
 }
