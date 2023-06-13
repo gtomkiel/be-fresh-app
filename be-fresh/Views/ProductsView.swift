@@ -3,6 +3,8 @@ import Foundation
 import SwiftUI
 
 struct ProductsView: View {
+    @State private var productName = ""
+    @State private var expiryDate = ""
     @State private var isManually = false
     @State private var isBarcodeSheet = false
     @State var rem = UserDefaults.standard.bool(forKey: "RemoveRename")
@@ -111,16 +113,15 @@ struct ProductsView: View {
                                     let command = "startBarcode"
                                     Server.shared.sendCommandToServer(command: command) { string in
                                         // Process the received string here
-                                    responseString = string
-                                    print(responseString ?? "error ocured")
-                                        if let responseString = responseString{
-                                            if responseString != ""{
+                                        responseString = string
+                                        print(responseString ?? "error ocured")
+                                        if let responseString = responseString {
+                                            if responseString != "" {
                                                 addItem(nameFromBarcode: responseString)
                                                 isShowingSheet = false
                                                 isManually = false
                                                 isBarcodeSheet = false
-                                            }
-                                            else{
+                                            } else {
                                                 isShowingSheet = false
                                                 isManually = false
                                                 isBarcodeSheet = false
@@ -138,8 +139,7 @@ struct ProductsView: View {
                             .cornerRadius(15)
                             .shadow(radius: 5)
                             .overlay {
-                                Button("Testing add") {
-                                    addItem(nameFromBarcode:  "Test shit idk")
+                                Button("Phone camera") {
                                     isShowingSheet = false
                                     isManually = false
                                     isBarcodeSheet = false
@@ -159,40 +159,28 @@ struct ProductsView: View {
                             .font(.system(size: 36))
                             .padding(.bottom, 20)
                         Spacer()
-                        Spacer()
+
+                        VStack {
+                            TextField("Product name", text: $productName)
+                                .padding(.horizontal)
+                                .padding(.top)
+                            TextField("Expiry date", text: $expiryDate)
+                                .padding(.horizontal)
+                                .padding(.bottom)
+                        }
+                        .foregroundColor(.white)
+                        .font(.system(size: 24))
+                        .background(Color("greenColor"))
+                        .cornerRadius(15)
+                        .shadow(radius: 5)
+
                         Rectangle()
                             .foregroundColor(Color("greenColor"))
                             .cornerRadius(15)
                             .shadow(radius: 5)
                             .overlay {
-                                Text("Product name")
-                                    .foregroundColor(.white)
-                                    .fontWeight(.semibold)
-                                    .font(.system(size: 24))
-                                    .italic()
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .padding(.leading)
-                            }
-                        Rectangle()
-                            .foregroundColor(Color("greenColor"))
-                            .cornerRadius(15)
-                            .shadow(radius: 5)
-                            .overlay {
-                                Text("Expiry date")
-                                    .foregroundColor(.white)
-                                    .fontWeight(.semibold)
-                                    .font(.system(size: 24))
-                                    .italic()
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .padding(.leading)
-                            }
-                        Rectangle()
-                            .foregroundColor(Color("greenColor"))
-                            .cornerRadius(15)
-                            .shadow(radius: 5)
-                            .overlay {
-                                Button("Testing add") {
-                                    addItem(nameFromBarcode: "Test Name")
+                                Button("Confirm") {
+                                    addItem(nameFromBarcode: productName)
                                     isShowingSheet = false
                                     isManually = false
                                     isBarcodeSheet = false
@@ -207,13 +195,67 @@ struct ProductsView: View {
                 }
                 .sheet(isPresented: $isBarcodeSheet) {
                     VStack {
-                        Text("barecode will be here instead")
-                        Spacer()
+                        Text("Scan the barcode now")
+                            .fontWeight(.heavy)
+                            .font(.system(size: 36))
+                            .padding(.bottom, 20)
+
+                        Image(systemName: "barcode.viewfinder")
+                            .resizable()
+                            .frame(width: 128, height: 128)
+                            .foregroundColor(.black)
                     }
-                    .presentationDetents([.fraction(0.5)])
+                    .presentationDetents([.fraction(0.35)])
                 }
-                .sheet(isPresented: $isErrorSheet){
-                    Text("No such product in the database")
+                .sheet(isPresented: .constant(false)) { // change later to swap when barecode was found
+                    VStack {
+                        Text("Add expiry date")
+                            .fontWeight(.heavy)
+                            .font(.system(size: 36))
+                            .padding(.bottom, 20)
+
+                        TextField("Expiry date", text: $expiryDate)
+                            .padding(.horizontal)
+                            .padding(.bottom)
+                            .foregroundColor(.white)
+                            .font(.system(size: 24))
+                            .background(Color("greenColor"))
+                            .cornerRadius(15)
+                            .shadow(radius: 5)
+
+                        Spacer()
+
+                        Rectangle()
+                            .foregroundColor(Color("greenColor"))
+                            .cornerRadius(15)
+                            .shadow(radius: 5)
+                            .overlay {
+                                Button("Confirm") {
+                                    addItem(nameFromBarcode: productName)
+                                    isShowingSheet = false
+                                    isManually = false
+                                    isBarcodeSheet = false
+                                }
+                                .foregroundColor(.white)
+                                .fontWeight(.semibold)
+                                .font(.system(size: 24))
+                            }
+                    }
+                    .presentationDetents([.fraction(0.35)])
+                }
+                .sheet(isPresented: $isErrorSheet) {
+                    VStack {
+                        Text("Product not found!")
+                            .fontWeight(.heavy)
+                            .font(.system(size: 36))
+                            .padding(.bottom, 20)
+
+                        Image(systemName: "exclamationmark.triangle")
+                            .resizable()
+                            .frame(width: 128, height: 128)
+                            .foregroundColor(.black)
+                    }
+                    .presentationDetents([.fraction(0.35)])
                 }
             }
         }
@@ -243,7 +285,7 @@ struct ProductsView: View {
             }
         }
     }
-    
+
     private func addItemByName(date: Date, name: String) {
         withAnimation {
             var currentDate = Date()
@@ -268,7 +310,7 @@ struct ProductsView: View {
             }
         }
     }
-    
+
     private func deleteItems(offsets: IndexSet) {
         withAnimation {
             offsets.map { products[$0] }.forEach(viewContext.delete)
