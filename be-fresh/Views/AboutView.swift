@@ -16,7 +16,6 @@ struct AboutView: View {
             .padding(.horizontal)
             
             List {
-                
                 Rectangle()
                     .frame(height: 50)
                     .foregroundColor(Color(red: 217, green: 217, blue: 217))
@@ -35,12 +34,6 @@ struct AboutView: View {
                     }
             }
             .listStyle(.plain)
-            
-            Group {
-                Text("Copyright © 2023 Apple Inc.")
-                Text("All rights reserved.")
-            }
-            .font(.footnote)
         }
     }
 }
