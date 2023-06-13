@@ -21,8 +21,16 @@ struct be_freshApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+            NavigationStack {
+                if defaultModel.first == false {
+                    FirstContentView()
+                        .environmentObject(defaultModel)
+                } else {
+                    ContentView()
+                        .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                }
+            }
+            .ignoresSafeArea()
         }
     }
 }
