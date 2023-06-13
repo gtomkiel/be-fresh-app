@@ -4,7 +4,7 @@ from time import sleep
 from picozero import pico_temp_sensor, pico_led
 import machine
 from WiFiConnect import wConnect
-
+from LED import redRGB, amberRGB, greenRGB
 import socket
 import sys
 
@@ -40,15 +40,18 @@ while True:
 
         data = connection.recv(1024).decode()
         if "startBarcode" in data:
+            amberRGB()
             print("yeaaaa connec")
             ini_name = wConnect()
             print(ini_name)
-            if "API request failed" in ini_name:
+            if "API request failed" in ini_name: #Add cases for other code errors
+                redRGB()
                 error = "404Error"
                 response = "HTTP/1.1 200 OK\r\nContent-Length: \r\n\r\n{}".format(error)
                 connection.sendall(response.encode("utf-8"))
                 continue
             else:
+                greenRGB()
                 fin_name = ''
                 if ',' in ini_name:
                     str_name = ini_name.split(",")
@@ -58,6 +61,7 @@ while True:
                 response = "HTTP/1.1 200 OK\r\nContent-Length: {}\r\n\r\n{}".format(len(fin_name), fin_name)
                 
                 connection.sendall(response.encode("utf-8"))
+                
                 continue
     finally:
         connection.close()
