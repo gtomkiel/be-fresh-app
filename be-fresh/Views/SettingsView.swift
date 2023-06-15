@@ -3,6 +3,7 @@ import SwiftUI
 struct SettingsView: View {
     @State private var showStatus = UserDefaults.standard.bool(forKey: "RemoveRename")
     @State private var expireDate = UserDefaults.standard.integer(forKey: "ExpireDate")
+    @AppStorage("disableNotification") var disableNotification = false
     @State private var isEditing = false
     @State private var showStatus2 = true
     @State private var showStatus3 = true
@@ -62,6 +63,15 @@ struct SettingsView: View {
                         }
                         .padding(.leading)
                     }
+                    
+                    Rectangle()
+                        .frame(height: 50)
+                        .foregroundColor(Color(red: 217, green: 217, blue :217))
+                        .cornerRadius(15)
+                        .overlay {
+                            Toggle("Notifaction", isOn: $disableNotification)
+                        }
+                    
                     
                     Rectangle()
                         .frame(height: 50)

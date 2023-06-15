@@ -16,6 +16,11 @@ class Notification {
     }
     
     func sendNotification(date: Date, type: String, timeInterval: Double = 10, title: String, body: String) {
+        if !UserDefaults.standard.bool(forKey: "disableNotification") {
+            return;
+        }
+        
+        print("trigger...")
 //        if permissionNotofication == true{
         var trigger: UNNotificationTrigger?
         if type == "date" {
