@@ -274,19 +274,10 @@ struct ProductsView: View {
 
     private func addItem(nameFromBarcode: String, expirationDate: Date) {
         withAnimation {
-            var currentDate = Date()
-
-            let calendar = Calendar.current
-            let oneHour: TimeInterval = 360000
-
-            if let newDate = calendar.date(byAdding: .second, value: Int(oneHour), to: currentDate) {
-                currentDate = newDate
-                print(currentDate)
-            }
             let newProduct = Product(context: viewContext)
             newProduct.productName = nameFromBarcode
             newProduct.expirationDate = expirationDate
-            Notification().sendNotification(date: currentDate, type: "time", title: "Product expiration", body: "Product \(String(describing: newProduct.productName!)) is expiring today")
+            Notification().sendNotification(date: expirationDate, type: "time", title: "Product expiration", body: "Product \(String(describing: newProduct.productName!)) is expiring today")
             print("\(String(describing: newProduct.productName))")
             do {
                 try viewContext.save()
