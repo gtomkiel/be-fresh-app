@@ -37,9 +37,8 @@ class Notification {
         content.sound = UNNotificationSound.default
         
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
-        UNUserNotificationCenter.current().add(request)
-//        else{
-//            askPerm()
-//        }
+        if UserDefaults.standard.bool(forKey: "DisableNotification"){
+            UNUserNotificationCenter.current().add(request)
+        }
     }
 }
