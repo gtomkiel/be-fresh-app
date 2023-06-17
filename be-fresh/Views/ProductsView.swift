@@ -1,3 +1,4 @@
+import CodeScanner
 import CoreData
 import Foundation
 import SwiftUI
@@ -14,6 +15,7 @@ struct ProductsView: View {
     @State private var isErrorSheet = false
     @Environment(\.managedObjectContext) var viewContext
     @State private var isShowingSheet = false
+    @State private var isShowingCamera = false
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \Product.productName, ascending: true)],
         animation: .default)
@@ -143,6 +145,7 @@ struct ProductsView: View {
                                     isShowingSheet = false
                                     isManually = false
                                     isBarcodeSheet = false
+                                    isShowingCamera = true
                                 }
                                 .foregroundColor(.white)
                                 .fontWeight(.semibold)
@@ -257,7 +260,24 @@ struct ProductsView: View {
                     }
                     .presentationDetents([.fraction(0.35)])
                 }
+                .sheet(isPresented: $isShowingCamera) {
+                    Text("camera should be here")
+                    CodeScannerView(codeTypes: [.qr], completion: handleScan)
+                }
             }
+        }
+    }
+
+    func handleScan(result: Result<ScanResult, ScanError>) {
+        isShowingCamera = false
+
+        switch result {
+        case .success(let result):
+            let details = result.string.components(separatedBy: "\n")
+            guard details.count == 2 else { return }
+
+        case .failure(let error):
+            print("Scanning failed: \(error.localizedDescription)")
         }
     }
 
