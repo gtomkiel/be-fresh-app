@@ -13,7 +13,7 @@ struct ContentView: View {
                     Image(systemName: "refrigerator")
                     Text("Products")
                 }
-            RecipeList()
+            RecipeList(allProducts: PersistenceController.shared.getAllProducts())
                 .tabItem {
                     Image(systemName: "frying.pan")
                     Text("Recipes")

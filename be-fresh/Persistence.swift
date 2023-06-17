@@ -72,5 +72,20 @@ struct PersistenceController {
             print("Failed to fetch products: \(error)")
         }
     }
+    
+    func getAllProducts()-> String{
+        var allProductsString = ""
+        let request: NSFetchRequest<Product> = Product.fetchRequest()
+        do {
+            let products = try container.viewContext.fetch(request)
+            for product in products {
+                allProductsString += "\(String(describing: product.productName!)) "
+            }
+        } catch {
+            // Handle the error appropriately
+            print("Failed to fetch products: \(error)")
+        }
+        return allProductsString
+    }
 }
 

@@ -7,12 +7,11 @@ struct RecipesView: View {
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \Product.productName, ascending: true)],
         animation: .default)
-    private var products: FetchedResults<Product>
+    private var fetchedProducts: FetchedResults<Product>
 
     let recipeName: String
 
     init(recipeName: String) {
-        
         self.recipeName = recipeName
         self._api = StateObject(wrappedValue: ApiCall(
             prompt: "Give me formatted recipe for \(recipeName) with title at the beginning",

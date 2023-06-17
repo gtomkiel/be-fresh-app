@@ -1,7 +1,26 @@
 import SwiftUI
 
 struct RecipeList: View {
-    @StateObject var api = ApiCall(prompt: "Give me 5 recipe names separated by comma based on those products [chicken, tomato sauce, pasta, cheese, mushrooms]", temperature: "0.7")
+    @FetchRequest(
+        sortDescriptors: [NSSortDescriptor(keyPath: \Product.productName, ascending: true)],
+        animation: .default)
+    private var fetchedProducts: FetchedResults<Product>
+    //@StateObject var api: ApiCall
+
+    @StateObject var api: ApiCall
+    var allProducts = PersistenceController.shared.getAllProducts()
+
+    init(allProducts: String) {
+        self.allProducts = allProducts
+        self._api = StateObject(wrappedValue: ApiCall(
+            prompt: "Give me 5 recipe names separated by comma based on those products \(allProducts)",
+            temperature: "0.7"
+        ))
+        print("euirgkje2rgh;eorg")
+        print(allProducts)
+    }
+    
+    //"Give me 5 recipe names separated by comma based on those products
     
     @State private var isShowingSheet = false
     @State private var customMealText = ""
@@ -79,7 +98,11 @@ struct RecipeList: View {
             .padding([.leading, .trailing])
             .onAppear {
                 if !launched {
+                    print("qhwrfiulqriuwrgoiuhqergiouqegophqergoihqeroighqeiorg")
                     api.fetchData()
+                    print(api.response)
+                    print(api.prompt)
+                    print(api.fetchData())
                     launched.toggle()
                 }
             }
@@ -138,6 +161,6 @@ struct RecipeListView: View {
 
 struct RecipeList_Previews: PreviewProvider {
     static var previews: some View {
-        RecipeList()
+        RecipeList(allProducts: PersistenceController.shared.getAllProducts())
     }
 }
