@@ -4,7 +4,7 @@ import SwiftUI
 
 struct ProductsView: View {
     @State private var productName = ""
-    @State private var expiryDate = ""
+    @State private var expiryDate = Date()
     @State private var isManually = false
     @State private var isBarcodeSheet = false
     @State var rem = UserDefaults.standard.bool(forKey: "RemoveRename")
@@ -20,6 +20,10 @@ struct ProductsView: View {
     private var products: FetchedResults<Product>
     @State private var isSwiped = false
     @GestureState private var dragOffset: CGSize = .zero
+    @State private var remove = false
+    init() {
+        
+    }
 
     var body: some View {
         NavigationView {
@@ -48,7 +52,14 @@ struct ProductsView: View {
                             VStack(alignment: .leading) {
                                 ForEach(products) { product in
                                     HStack {
-                                        ListItemView(name: product.productName ?? "error", date: String(describing: product.expirationDate!), showLine: true, prdct: product, modification: true)
+                                        let calendar = Calendar.current
+                                        let dateComponents = calendar.dateComponents([.year, .month, .day], from: product.expirationDate!)
+
+                                        let formattedDate = "\(dateComponents.year ?? 0)/\(String(format: "%02d", dateComponents.month ?? 0))/\(String(format: "%02d", dateComponents.day ?? 0))"
+                                        ListItemView(name: product.productName ?? "error", date: String(describing: formattedDate), showLine: true, prdct: product, rem: remove, modification: true)
+                                    }
+                                    .onAppear{
+                                        remove = UserDefaults.standard.bool(forKey: "RemoveRename")
                                     }
                                 }
                                 Spacer()
@@ -117,7 +128,7 @@ struct ProductsView: View {
                                         print(responseString ?? "error ocured")
                                         if let responseString = responseString {
                                             if responseString != "" {
-                                                addItem(nameFromBarcode: responseString)
+                                                addItem(nameFromBarcode: responseString, expirationDate: Date())
                                                 isShowingSheet = false
                                                 isManually = false
                                                 isBarcodeSheet = false
@@ -164,9 +175,9 @@ struct ProductsView: View {
                             TextField("Product name", text: $productName)
                                 .padding(.horizontal)
                                 .padding(.top)
-                            TextField("Expiry date", text: $expiryDate)
-                                .padding(.horizontal)
-                                .padding(.bottom)
+                            DatePicker("Expiry date", selection: $expiryDate, displayedComponents: .date)
+                                        .padding(.horizontal)
+                                        .padding(.bottom)
                         }
                         .foregroundColor(.white)
                         .font(.system(size: 24))
@@ -180,7 +191,7 @@ struct ProductsView: View {
                             .shadow(radius: 5)
                             .overlay {
                                 Button("Confirm") {
-                                    addItem(nameFromBarcode: productName)
+                                    addItem(nameFromBarcode: productName, expirationDate: expiryDate)
                                     isShowingSheet = false
                                     isManually = false
                                     isBarcodeSheet = false
@@ -214,7 +225,7 @@ struct ProductsView: View {
                             .font(.system(size: 36))
                             .padding(.bottom, 20)
 
-                        TextField("Expiry date", text: $expiryDate)
+                        DatePicker("Expiry date", selection: $expiryDate, displayedComponents: .date)
                             .padding(.horizontal)
                             .padding(.bottom)
                             .foregroundColor(.white)
@@ -231,7 +242,7 @@ struct ProductsView: View {
                             .shadow(radius: 5)
                             .overlay {
                                 Button("Confirm") {
-                                    addItem(nameFromBarcode: productName)
+                                    addItem(nameFromBarcode: productName, expirationDate: Date())
                                     isShowingSheet = false
                                     isManually = false
                                     isBarcodeSheet = false
@@ -261,21 +272,12 @@ struct ProductsView: View {
         }
     }
 
-    private func addItem(nameFromBarcode: String) {
+    private func addItem(nameFromBarcode: String, expirationDate: Date) {
         withAnimation {
-            var currentDate = Date()
-
-            let calendar = Calendar.current
-            let oneHour: TimeInterval = 360000
-
-            if let newDate = calendar.date(byAdding: .second, value: Int(oneHour), to: currentDate) {
-                currentDate = newDate
-                print(currentDate)
-            }
             let newProduct = Product(context: viewContext)
             newProduct.productName = nameFromBarcode
-            newProduct.expirationDate = currentDate
-            Notification().sendNotification(date: currentDate, type: "time", title: "Product expiration", body: "Product \(String(describing: newProduct.productName!)) is expiring today")
+            newProduct.expirationDate = expirationDate
+            Notification().sendNotification(date: expirationDate, type: "time", title: "Product expiration", body: "Product \(String(describing: newProduct.productName!)) is expiring today")
             print("\(String(describing: newProduct.productName))")
             do {
                 try viewContext.save()

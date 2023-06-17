@@ -5,7 +5,7 @@ struct ListItemView: View {
     var date: String
     var showLine: Bool
     var prdct: Product
-    var rem = UserDefaults.standard.bool(forKey: "RemoveRename")
+    var rem: Bool
     var modification: Bool
     
     @State private var isEditing = false
@@ -36,11 +36,12 @@ struct ListItemView: View {
                             .font(.system(size: 15))
                     }
                     .padding(.leading)
+                    
                 }
                 .foregroundColor(Color.white)
                 
                 Spacer()
-                if rem && modification{
+                if rem && modification == true{
                     Button(action: {
                         isEditing.toggle()
                         if isEditing {
