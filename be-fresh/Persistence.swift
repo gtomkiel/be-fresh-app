@@ -8,6 +8,7 @@ struct PersistenceController {
         let viewContext = result.container.viewContext
         
         let request: NSFetchRequest<Product> = Product.fetchRequest()
+        let requestBookmark: NSFetchRequest<BookMark> = BookMark.fetchRequest()
         
         
         return result
@@ -86,6 +87,19 @@ struct PersistenceController {
             print("Failed to fetch products: \(error)")
         }
         return allProductsString
+    }
+    
+    func saveBookmark(bookmark: BookMark, text: String){
+        let context = PersistenceController.shared.container.viewContext
+        context.perform {
+            bookmark.bookmark = text
+            do {
+                try context.save()
+                print("New product name saved successfully.")
+            } catch {
+                print("Failed to save new product name: \(error.localizedDescription)")
+            }
+        }
     }
 }
 

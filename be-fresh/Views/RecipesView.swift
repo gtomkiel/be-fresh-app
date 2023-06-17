@@ -4,10 +4,15 @@ struct RecipesView: View {
     @StateObject private var api: ApiCall
     @State private var text = false
     @State private var launched = false
+    @Environment(\.managedObjectContext) var viewContext
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \Product.productName, ascending: true)],
         animation: .default)
     private var fetchedProducts: FetchedResults<Product>
+    @FetchRequest(
+        sortDescriptors: [NSSortDescriptor(keyPath: \BookMark.bookmark, ascending: true)],
+        animation: .default)
+    private var bookmarks: FetchedResults<BookMark>
 
     let recipeName: String
 
@@ -84,12 +89,22 @@ struct RecipesView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: {
-                    // bookmark somehow
-                    // somehow is probably putting current api.response into CoreData i guess
+                    addBookmark(text: api.response)
                 }) {
                     Image(systemName: "bookmark")
-                    // also make this swap to bookmar.fill when its actually bookmarked
                 }
+            }
+        }
+    }
+    private func addBookmark(text: String) {
+        withAnimation {
+            let newBookMark = BookMark(context: viewContext)
+            newBookMark.bookmark = text
+            do {
+                try viewContext.save()
+            } catch {
+                let nsError = error as NSError
+                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
             }
         }
     }
