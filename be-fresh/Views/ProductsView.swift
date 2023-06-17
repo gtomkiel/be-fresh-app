@@ -261,8 +261,7 @@ struct ProductsView: View {
                     .presentationDetents([.fraction(0.35)])
                 }
                 .sheet(isPresented: $isShowingCamera) {
-                    Text("camera should be here")
-                    CodeScannerView(codeTypes: [.qr], completion: handleScan)
+                    CodeScannerView(codeTypes: [.codabar, .code39, .code39Mod43, .code93, .code128, .ean8, .ean13, .interleaved2of5, .itf14, .upce], completion: handleScan)
                 }
             }
         }
@@ -273,11 +272,10 @@ struct ProductsView: View {
 
         switch result {
         case .success(let result):
-            let details = result.string.components(separatedBy: "\n")
-            guard details.count == 2 else { return }
+            print("Scanning success")
 
         case .failure(let error):
-            print("Scanning failed: \(error.localizedDescription)")
+            print("Scanning failed")
         }
     }
 
