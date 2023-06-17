@@ -23,6 +23,7 @@
 		6420A02B2A273750007226C6 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6420A02A2A273750007226C6 /* SettingsView.swift */; };
 		6420A02E2A273791007226C6 /* RegisterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6420A02D2A273791007226C6 /* RegisterView.swift */; };
 		6420A0312A2737C5007226C6 /* TabData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6420A0302A2737C5007226C6 /* TabData.swift */; };
+		6450B38E2A3E3CAA00FD9729 /* CodeScanner in Frameworks */ = {isa = PBXBuildFile; productRef = 6450B38D2A3E3CAA00FD9729 /* CodeScanner */; };
 		646B5AEE2A13728C00D3C6DB /* be_freshApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 646B5AED2A13728C00D3C6DB /* be_freshApp.swift */; };
 		646B5AF02A13728C00D3C6DB /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 646B5AEF2A13728C00D3C6DB /* ContentView.swift */; };
 		646B5AF22A13728D00D3C6DB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 646B5AF12A13728D00D3C6DB /* Assets.xcassets */; };
@@ -70,6 +71,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6450B38E2A3E3CAA00FD9729 /* CodeScanner in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -197,6 +199,9 @@
 			dependencies = (
 			);
 			name = "be-fresh";
+			packageProductDependencies = (
+				6450B38D2A3E3CAA00FD9729 /* CodeScanner */,
+			);
 			productName = "be-fresh";
 			productReference = 646B5AEA2A13728B00D3C6DB /* be-fresh.app */;
 			productType = "com.apple.product-type.application";
@@ -225,6 +230,9 @@
 				Base,
 			);
 			mainGroup = 646B5AE12A13728B00D3C6DB;
+			packageReferences = (
+				6450B38C2A3E3CAA00FD9729 /* XCRemoteSwiftPackageReference "CodeScanner" */,
+			);
 			productRefGroup = 646B5AEB2A13728B00D3C6DB /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -406,6 +414,7 @@
 				DEVELOPMENT_TEAM = PSZLR7BATX;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Camera is required to scan the barcode";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -436,6 +445,7 @@
 				DEVELOPMENT_TEAM = PSZLR7BATX;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Camera is required to scan the barcode";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -477,6 +487,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		6450B38C2A3E3CAA00FD9729 /* XCRemoteSwiftPackageReference "CodeScanner" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/twostraws/CodeScanner.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		6450B38D2A3E3CAA00FD9729 /* CodeScanner */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6450B38C2A3E3CAA00FD9729 /* XCRemoteSwiftPackageReference "CodeScanner" */;
+			productName = CodeScanner;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		646B5AF82A13728D00D3C6DB /* be_fresh.xcdatamodeld */ = {
