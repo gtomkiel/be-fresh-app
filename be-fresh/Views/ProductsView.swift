@@ -156,6 +156,7 @@ struct ProductsView: View {
                                     isShowingSheet = false
                                     isManually = false
                                     isBarcodeSheet = false
+                                    isShowingCamera = true
                                 }
                                 .foregroundColor(.white)
                                 .fontWeight(.semibold)
