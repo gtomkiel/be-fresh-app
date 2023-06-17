@@ -6,10 +6,6 @@ struct RecipesView: View {
     @State private var launched = false
     @Environment(\.managedObjectContext) var viewContext
     @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Product.productName, ascending: true)],
-        animation: .default)
-    private var fetchedProducts: FetchedResults<Product>
-    @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \BookMark.bookmark, ascending: true)],
         animation: .default)
     private var bookmarks: FetchedResults<BookMark>
@@ -89,7 +85,7 @@ struct RecipesView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: {
-                    addBookmark(text: api.response)
+                    addBookmark(text: "new bookmark")
                 }) {
                     Image(systemName: "bookmark")
                 }
@@ -99,6 +95,7 @@ struct RecipesView: View {
     private func addBookmark(text: String) {
         withAnimation {
             let newBookMark = BookMark(context: viewContext)
+            print(newBookMark)
             newBookMark.bookmark = text
             do {
                 try viewContext.save()
