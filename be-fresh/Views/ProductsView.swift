@@ -272,25 +272,30 @@ struct ProductsView: View {
                     .presentationDetents([.fraction(0.35)])
                 }
                 .sheet(isPresented: $isShowingCamera) {
-                    CodeScannerView(codeTypes: [.codabar, .code39, .code39Mod43, .code93, .code128, .ean8, .ean13, .interleaved2of5, .itf14, .upce], shouldVibrateOnSuccess: true, completion: handleScan)
+                    CodeScannerView(codeTypes: [.codabar, .code39, .code39Mod43, .code93, .code128, .ean8, .ean13, .interleaved2of5, .itf14, .upce], simulatedData: "7427037876898", shouldVibrateOnSuccess: true, completion: handleScan)
                 }
                 .sheet(isPresented: $isShowingDateInput) {
                     VStack {
-                        Text("Add expiry date")
+                        Text("Add Expiry date")
                             .fontWeight(.heavy)
                             .font(.system(size: 36))
                             .padding(.bottom, 20)
 
-                        DatePicker("Expiry date", selection: $expiryDate, displayedComponents: .date)
-                            .padding(.horizontal)
-                            .padding(.bottom)
-                            .foregroundColor(.white)
-                            .font(.system(size: 24))
-                            .background(Color("greenColor"))
-                            .cornerRadius(15)
-                            .shadow(radius: 5)
+                        VStack {
+                            Text("Expiry date")
+                                .padding([.top, .leading, .trailing])
 
-                        Spacer()
+                            DatePicker("", selection: $expiryDate, displayedComponents: .date)
+                                .labelsHidden()
+                                .frame(maxWidth: .infinity, alignment: .center)
+                                .padding([.top, .leading, .trailing])
+                                .accentColor(.white)
+                        }
+                        .foregroundColor(.white)
+                        .font(.system(size: 24))
+                        .background(Color("greenColor"))
+                        .cornerRadius(15)
+                        .shadow(radius: 5)
 
                         Rectangle()
                             .foregroundColor(Color("greenColor"))
@@ -298,16 +303,18 @@ struct ProductsView: View {
                             .shadow(radius: 5)
                             .overlay {
                                 Button("Confirm") {
-                                    addItem(nameFromBarcode: productName, expirationDate: Date())
+                                    addItem(nameFromBarcode: productName, expirationDate: expiryDate)
                                     isShowingSheet = false
                                     isManually = false
                                     isBarcodeSheet = false
+                                    isShowingDateInput = false
                                 }
                                 .foregroundColor(.white)
                                 .fontWeight(.semibold)
                                 .font(.system(size: 24))
                             }
                     }
+                    .padding()
                     .presentationDetents([.fraction(0.35)])
                 }
             }
