@@ -4,6 +4,7 @@ import Foundation
 import SwiftUI
 
 struct ProductsView: View {
+    let parser = ApiParser()
     @State private var productName = ""
     @State private var expiryDate = ""
     @State private var isManually = false
@@ -261,7 +262,7 @@ struct ProductsView: View {
                     .presentationDetents([.fraction(0.35)])
                 }
                 .sheet(isPresented: $isShowingCamera) {
-                    CodeScannerView(codeTypes: [.codabar, .code39, .code39Mod43, .code93, .code128, .ean8, .ean13, .interleaved2of5, .itf14, .upce], completion: handleScan)
+                    CodeScannerView(codeTypes: [.codabar, .code39, .code39Mod43, .code93, .code128, .ean8, .ean13, .interleaved2of5, .itf14, .upce], shouldVibrateOnSuccess: true, completion: handleScan)
                 }
             }
         }
@@ -272,9 +273,17 @@ struct ProductsView: View {
 
         switch result {
         case .success(let result):
-            print("Scanning success")
+            let scannedCode = result.string
+            print(Int(scannedCode) ?? 0)
+            parser.getName(barcode: Int(scannedCode) ?? 0) { title in
+                if let title = title {
+                    addItem(nameFromBarcode: title)
+                } else {
+                    print("No title found")
+                }
+            }
 
-        case .failure(let error):
+        case .failure:
             print("Scanning failed")
         }
     }
