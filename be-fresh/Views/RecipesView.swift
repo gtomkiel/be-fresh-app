@@ -116,7 +116,11 @@ struct RecipesView: View {
                 Button(action: {
                     addBookmark(text: String(api.response), title: String(self.recipeName))
                 }) {
-                    Image(systemName: "bookmark")
+                    if let bookmark = self.bookmark?.bookmark{
+                    }
+                    else{
+                        Image(systemName: "bookmark")
+                    }
                 }
             }
         }
