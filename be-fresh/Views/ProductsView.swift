@@ -1,8 +1,12 @@
+import CodeScanner
 import CoreData
 import Foundation
 import SwiftUI
 
 struct ProductsView: View {
+    let parser = ApiParser()
+    @State private var productName = ""
+    @State private var expiryDate = Date()
     @State private var isManually = false
     @State private var isBarcodeSheet = false
     @State var rem = UserDefaults.standard.bool(forKey: "RemoveRename")
@@ -12,12 +16,16 @@ struct ProductsView: View {
     @State private var isErrorSheet = false
     @Environment(\.managedObjectContext) var viewContext
     @State private var isShowingSheet = false
+    @State private var isShowingCamera = false
+    @State private var isShowingDateInput = false
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \Product.productName, ascending: true)],
         animation: .default)
     private var products: FetchedResults<Product>
     @State private var isSwiped = false
     @GestureState private var dragOffset: CGSize = .zero
+    @State private var remove = false
+    init() {}
 
     var body: some View {
         NavigationView {
@@ -46,7 +54,14 @@ struct ProductsView: View {
                             VStack(alignment: .leading) {
                                 ForEach(products) { product in
                                     HStack {
-                                        ListItemView(name: product.productName ?? "error", date: String(describing: product.expirationDate!), showLine: true, prdct: product, modification: true)
+                                        let calendar = Calendar.current
+                                        let dateComponents = calendar.dateComponents([.year, .month, .day], from: product.expirationDate!)
+
+                                        let formattedDate = "\(dateComponents.year ?? 0)/\(String(format: "%02d", dateComponents.month ?? 0))/\(String(format: "%02d", dateComponents.day ?? 0))"
+                                        ListItemView(name: product.productName ?? "error", date: String(describing: formattedDate), showLine: true, prdct: product, rem: remove, modification: true)
+                                    }
+                                    .onAppear {
+                                        remove = UserDefaults.standard.bool(forKey: "RemoveRename")
                                     }
                                 }
                                 Spacer()
@@ -111,16 +126,15 @@ struct ProductsView: View {
                                     let command = "startBarcode"
                                     Server.shared.sendCommandToServer(command: command) { string in
                                         // Process the received string here
-                                    responseString = string
-                                    print(responseString ?? "error ocured")
-                                        if let responseString = responseString{
-                                            if responseString != ""{
-                                                addItem(nameFromBarcode: responseString)
+                                        responseString = string
+                                        print(responseString ?? "error ocured")
+                                        if let responseString = responseString {
+                                            if responseString != "" {
+                                                addItem(nameFromBarcode: responseString, expirationDate: Date())
                                                 isShowingSheet = false
                                                 isManually = false
                                                 isBarcodeSheet = false
-                                            }
-                                            else{
+                                            } else {
                                                 isShowingSheet = false
                                                 isManually = false
                                                 isBarcodeSheet = false
@@ -138,11 +152,11 @@ struct ProductsView: View {
                             .cornerRadius(15)
                             .shadow(radius: 5)
                             .overlay {
-                                Button("Testing add") {
-                                    addItem(nameFromBarcode:  "Test shit idk")
+                                Button("Phone camera") {
                                     isShowingSheet = false
                                     isManually = false
                                     isBarcodeSheet = false
+                                    isShowingCamera = true
                                 }
                                 .foregroundColor(.white)
                                 .fontWeight(.semibold)
@@ -159,40 +173,28 @@ struct ProductsView: View {
                             .font(.system(size: 36))
                             .padding(.bottom, 20)
                         Spacer()
-                        Spacer()
+
+                        VStack {
+                            TextField("Product name", text: $productName)
+                                .padding(.horizontal)
+                                .padding(.top)
+                            DatePicker("Expiry date", selection: $expiryDate, displayedComponents: .date)
+                                .padding(.horizontal)
+                                .padding(.bottom)
+                        }
+                        .foregroundColor(.white)
+                        .font(.system(size: 24))
+                        .background(Color("greenColor"))
+                        .cornerRadius(15)
+                        .shadow(radius: 5)
+
                         Rectangle()
                             .foregroundColor(Color("greenColor"))
                             .cornerRadius(15)
                             .shadow(radius: 5)
                             .overlay {
-                                Text("Product name")
-                                    .foregroundColor(.white)
-                                    .fontWeight(.semibold)
-                                    .font(.system(size: 24))
-                                    .italic()
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .padding(.leading)
-                            }
-                        Rectangle()
-                            .foregroundColor(Color("greenColor"))
-                            .cornerRadius(15)
-                            .shadow(radius: 5)
-                            .overlay {
-                                Text("Expiry date")
-                                    .foregroundColor(.white)
-                                    .fontWeight(.semibold)
-                                    .font(.system(size: 24))
-                                    .italic()
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .padding(.leading)
-                            }
-                        Rectangle()
-                            .foregroundColor(Color("greenColor"))
-                            .cornerRadius(15)
-                            .shadow(radius: 5)
-                            .overlay {
-                                Button("Testing add") {
-                                    addItem(nameFromBarcode: "Test Name")
+                                Button("Confirm") {
+                                    addItem(nameFromBarcode: productName, expirationDate: expiryDate)
                                     isShowingSheet = false
                                     isManually = false
                                     isBarcodeSheet = false
@@ -207,33 +209,145 @@ struct ProductsView: View {
                 }
                 .sheet(isPresented: $isBarcodeSheet) {
                     VStack {
-                        Text("barecode will be here instead")
-                        Spacer()
+                        Text("Scan the barcode now")
+                            .fontWeight(.heavy)
+                            .font(.system(size: 36))
+                            .padding(.bottom, 20)
+
+                        Image(systemName: "barcode.viewfinder")
+                            .resizable()
+                            .frame(width: 128, height: 128)
+                            .foregroundColor(.black)
                     }
-                    .presentationDetents([.fraction(0.5)])
+                    .presentationDetents([.fraction(0.35)])
                 }
-                .sheet(isPresented: $isErrorSheet){
-                    Text("No such product in the database")
+                .sheet(isPresented: .constant(false)) { // change later to swap when barecode was found
+                    VStack {
+                        Text("Add expiry date")
+                            .fontWeight(.heavy)
+                            .font(.system(size: 36))
+                            .padding(.bottom, 20)
+
+                        DatePicker("Expiry date", selection: $expiryDate, displayedComponents: .date)
+                            .padding(.horizontal)
+                            .padding(.bottom)
+                            .foregroundColor(.white)
+                            .font(.system(size: 24))
+                            .background(Color("greenColor"))
+                            .cornerRadius(15)
+                            .shadow(radius: 5)
+
+                        Spacer()
+
+                        Rectangle()
+                            .foregroundColor(Color("greenColor"))
+                            .cornerRadius(15)
+                            .shadow(radius: 5)
+                            .overlay {
+                                Button("Confirm") {
+                                    addItem(nameFromBarcode: productName, expirationDate: Date())
+                                    isShowingSheet = false
+                                    isManually = false
+                                    isBarcodeSheet = false
+                                }
+                                .foregroundColor(.white)
+                                .fontWeight(.semibold)
+                                .font(.system(size: 24))
+                            }
+                    }
+                    .presentationDetents([.fraction(0.35)])
+                }
+                .sheet(isPresented: $isErrorSheet) {
+                    VStack {
+                        Text("Product not found!")
+                            .fontWeight(.heavy)
+                            .font(.system(size: 36))
+                            .padding(.bottom, 20)
+
+                        Image(systemName: "exclamationmark.triangle")
+                            .resizable()
+                            .frame(width: 128, height: 128)
+                            .foregroundColor(.black)
+                    }
+                    .presentationDetents([.fraction(0.35)])
+                }
+                .sheet(isPresented: $isShowingCamera) {
+                    CodeScannerView(codeTypes: [.codabar, .code39, .code39Mod43, .code93, .code128, .ean8, .ean13, .interleaved2of5, .itf14, .upce], simulatedData: "7427037876898", shouldVibrateOnSuccess: true, completion: handleScan)
+                }
+                .sheet(isPresented: $isShowingDateInput) {
+                    VStack {
+                        Text("Add Expiry date")
+                            .fontWeight(.heavy)
+                            .font(.system(size: 36))
+                            .padding(.bottom, 20)
+
+                        VStack {
+                            Text("Expiry date")
+                                .padding([.top, .leading, .trailing])
+
+                            DatePicker("", selection: $expiryDate, displayedComponents: .date)
+                                .labelsHidden()
+                                .frame(maxWidth: .infinity, alignment: .center)
+                                .padding([.top, .leading, .trailing])
+                                .accentColor(.white)
+                        }
+                        .foregroundColor(.white)
+                        .font(.system(size: 24))
+                        .background(Color("greenColor"))
+                        .cornerRadius(15)
+                        .shadow(radius: 5)
+
+                        Rectangle()
+                            .foregroundColor(Color("greenColor"))
+                            .cornerRadius(15)
+                            .shadow(radius: 5)
+                            .overlay {
+                                Button("Confirm") {
+                                    addItem(nameFromBarcode: productName, expirationDate: expiryDate)
+                                    isShowingSheet = false
+                                    isManually = false
+                                    isBarcodeSheet = false
+                                    isShowingDateInput = false
+                                }
+                                .foregroundColor(.white)
+                                .fontWeight(.semibold)
+                                .font(.system(size: 24))
+                            }
+                    }
+                    .padding()
+                    .presentationDetents([.fraction(0.35)])
                 }
             }
         }
     }
 
-    private func addItem(nameFromBarcode: String) {
-        withAnimation {
-            var currentDate = Date()
+    func handleScan(result: Result<ScanResult, ScanError>) {
+        isShowingCamera = false
 
-            let calendar = Calendar.current
-            let oneHour: TimeInterval = 360000
-
-            if let newDate = calendar.date(byAdding: .second, value: Int(oneHour), to: currentDate) {
-                currentDate = newDate
-                print(currentDate)
+        switch result {
+        case .success(let result):
+            let scannedCode = result.string
+            print(Int(scannedCode) ?? 0)
+            parser.getName(barcode: Int(scannedCode) ?? 0) { title in
+                if let title = title {
+                    isShowingDateInput = true
+                    self.productName = title
+                } else {
+                    print("No title found")
+                }
             }
+
+        case .failure:
+            print("Scanning failed")
+        }
+    }
+
+    private func addItem(nameFromBarcode: String, expirationDate: Date) {
+        withAnimation {
             let newProduct = Product(context: viewContext)
             newProduct.productName = nameFromBarcode
-            newProduct.expirationDate = currentDate
-            Notification().sendNotification(date: currentDate, type: "time", title: "Product expiration", body: "Product \(String(describing: newProduct.productName!)) is expiring today")
+            newProduct.expirationDate = expirationDate
+            Notification().sendNotification(date: expirationDate, type: "time", title: "Product expiration", body: "Product \(String(describing: newProduct.productName!)) is expiring today")
             print("\(String(describing: newProduct.productName))")
             do {
                 try viewContext.save()
@@ -243,7 +357,7 @@ struct ProductsView: View {
             }
         }
     }
-    
+
     private func addItemByName(date: Date, name: String) {
         withAnimation {
             var currentDate = Date()
@@ -268,7 +382,7 @@ struct ProductsView: View {
             }
         }
     }
-    
+
     private func deleteItems(offsets: IndexSet) {
         withAnimation {
             offsets.map { products[$0] }.forEach(viewContext.delete)

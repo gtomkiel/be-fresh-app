@@ -10,10 +10,8 @@ struct be_freshApp: App {
         let parser = ApiParser()
         parser.getName(barcode: 9181991172523) { title in
             if let title = title {
-                // Use the title here
                  print("Title: \(title)")
             } else {
-                // Handle the case where no title is available
                 print("No title found")
             }
         }
@@ -21,8 +19,16 @@ struct be_freshApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+            NavigationStack {
+                if defaultModel.first == false {
+                    FirstContentView()
+                        .environmentObject(defaultModel)
+                } else {
+                    ContentView()
+                        .environment(\.managedObjectContext, persistenceController.container.viewContext)
+                }
+            }
+            .ignoresSafeArea()
         }
     }
 }

@@ -16,6 +16,11 @@ class Notification {
     }
     
     func sendNotification(date: Date, type: String, timeInterval: Double = 10, title: String, body: String) {
+        if !UserDefaults.standard.bool(forKey: "disableNotification") {
+            return;
+        }
+        
+        print("trigger...")
 //        if permissionNotofication == true{
         var trigger: UNNotificationTrigger?
         if type == "date" {
@@ -30,11 +35,7 @@ class Notification {
         content.title = title
         content.title = body
         content.sound = UNNotificationSound.default
-        
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
         UNUserNotificationCenter.current().add(request)
-//        else{
-//            askPerm()
-//        }
     }
 }
