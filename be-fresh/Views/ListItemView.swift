@@ -9,6 +9,7 @@ struct ListItemView: View {
     var modification: Bool
     
     @State private var isEditing = false
+    @State private var nutrition = false
     @State private var editedName = ""
 
     var body: some View {
@@ -21,7 +22,7 @@ struct ListItemView: View {
                         .frame(width: 10.0, height: 10)
                     
                     // item
-                    VStack(alignment:.leading, spacing: 0) {
+                    VStack(alignment: .leading, spacing: 0) {
                         if isEditing {
                             TextField("Enter name", text: $editedName)
                                 .font(.system(size: 20))
@@ -41,6 +42,7 @@ struct ListItemView: View {
                 .foregroundColor(Color.white)
                 
                 Spacer()
+              
                 if rem && modification == true{
                     Button(action: {
                         isEditing.toggle()
@@ -62,6 +64,19 @@ struct ListItemView: View {
                     }
                     
                     Button(action: {
+                        self.nutrition = true
+                    }) {
+                        HStack {
+                            Image(systemName: "list.clipboard")
+                        }
+                        .font(.title2)
+                        .foregroundColor(.white)
+                        .padding()
+                        .background(Color.purple)
+                        .cornerRadius(8)
+                    }
+                    
+                    Button(action: {
                         PersistenceController.shared.deleteProduct(prdct)
                     }) {
                         HStack {
@@ -76,10 +91,10 @@ struct ListItemView: View {
                 }
             }
             .padding(10)
-            
-            if showLine {
-                Image("Line")
+            .sheet(isPresented: $nutrition) {
+                NutritionView(productName: prdct.productName ?? "nothing")
             }
+            .presentationDetents([.fraction(0.35)]) // does nothing for some reason
         }
     }
 }
