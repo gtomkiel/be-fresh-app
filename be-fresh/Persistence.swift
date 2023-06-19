@@ -17,7 +17,6 @@ struct PersistenceController {
     let container: NSPersistentContainer
 
     init(inMemory: Bool = false) {
-        
         container = NSPersistentContainer(name: "be_fresh")
         if inMemory {
             container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
@@ -30,7 +29,6 @@ struct PersistenceController {
             }
         })
         container.viewContext.automaticallyMergesChangesFromParent = true
-        deleteBookmarks()
     }
     
     func deleteProduct(_ product: Product) {

@@ -20,19 +20,22 @@ struct Bookmarks: View {
             }
             ScrollView {
                 VStack() {
-                    VStack {
-                        ForEach(bookmarks) { bookmark in
-                            NavigationLink(destination: RecipesView(recipeName: bookmark.title!, bookmark: bookmark, fromBookmarks: true)) {
-                                Text(String(bookmark.title ?? "No title"))
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .fontWeight(.semibold)
-                                    .font(.system(size: 24))
-                                
+                    ForEach(bookmarks) { bookmark in
+                        NavigationLink(destination: RecipesView(recipeName: bookmark.title!, bookmark: bookmark, fromBookmarks: true)) {
+                            VStack(){
                                 Rectangle()
-                                    .frame(height: 150)
-                                    .foregroundColor(Color("greenColor"))
-                                    .cornerRadius(15)
-                                    .shadow(radius: 5)
+                                .frame(height: 150)
+                                .foregroundColor(Color("greenColor"))
+                                .cornerRadius(15)
+                                .shadow(radius: 5)
+                                .overlay(
+                                    Text(String(bookmark.title ?? "No title"))
+                                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                        .font(.system(size: 24))
+                                        .foregroundColor(.white)
+                                        .padding()
+                                        .multilineTextAlignment(.center)
+                                )
                             }
                         }
                     }
