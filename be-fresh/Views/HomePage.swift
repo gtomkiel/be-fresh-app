@@ -13,6 +13,7 @@ struct HomePage: View {
     @State private var animate = false
     @State private var text = false
     @State private var launched = false
+    @State var daysToAdd = UserDefaults.standard.integer(forKey: "ExpireDate")
     
     var body: some View {
         NavigationView(){
@@ -48,7 +49,7 @@ struct HomePage: View {
                                                 let dateComponents = calendar.dateComponents([.year, .month, .day], from: product.expirationDate!)
 
                                                 let formattedDate = "\(dateComponents.year ?? 0)/\(String(format: "%02d", dateComponents.month ?? 0))/\(String(format: "%02d", dateComponents.day ?? 0))"
-                                                if calculateDate() <= product.expirationDate!{
+                                                if calculateDate(daysToAdd: daysToAdd) >= product.expirationDate!{
                                                     ListItemView(name: product.productName ?? "error", date: String(describing: formattedDate), showLine: true, prdct: product, rem: UserDefaults.standard.bool(forKey: "RemoveRename"), modification: false)
                                                 }
                                             }
@@ -92,6 +93,7 @@ struct HomePage: View {
                                                     text.toggle()
                                                 }
                                             }
+                                            daysToAdd = UserDefaults.standard.integer(forKey: "ExpireDate")
                                         }
                                     }
                                 }
@@ -121,18 +123,22 @@ struct HomePage: View {
     }
 }
 
-func calculateDate()->Date{
+func calculateDate(daysToAdd: Int)->Date{
+    // Get the current date
     let currentDate = Date()
+
+    // Retrieve the number of days from UserDefaults
+    //let userDefaults = UserDefaults.standard
+    //let daysToAdd = userDefaults.integer(forKey: "ExpireDate")
+
+    // Add the number of days to the current date
     let calendar = Calendar.current
-    
-    var dateComponents = DateComponents()
-    dateComponents.day = UserDefaults.standard.integer(forKey: "ExpireDate")
-    
-    if let futureDate = calendar.date(byAdding: dateComponents, to: currentDate) {
-        return futureDate
-    } else {
-        return Date()
+    let updatedDate = calendar.date(byAdding: .day, value: daysToAdd, to: currentDate)
+
+    if let updatedDate = updatedDate{
+        return updatedDate
     }
+    return Date()
 }
 
 struct HomePage_Previews: PreviewProvider {
