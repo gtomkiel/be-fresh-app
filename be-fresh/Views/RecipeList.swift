@@ -1,10 +1,11 @@
 import SwiftUI
 
 struct RecipeList: View {
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Product.productName, ascending: true)],
-        animation: .default)
-    private var fetchedProducts: FetchedResults<Product>
+    
+    //@FetchRequest(
+//        sortDescriptors: [NSSortDescriptor(keyPath: \Product.productName, ascending: true)],
+//        animation: .default)
+    //private var fetchedProducts: FetchedResults<Product>
     //@StateObject var api: ApiCall
 
     @StateObject var api: ApiCall
@@ -58,7 +59,7 @@ struct RecipeList: View {
                     } else {
                         let list = api.response.components(separatedBy: ",")
                         ForEach(list, id: \.self) { item in
-                            NavigationLink(destination: RecipesView(recipeName: item)) {
+                            NavigationLink(destination: RecipesView(recipeName: item, bookmark: nil, fromBookmarks: false)) {
                                 Text(item)
                                     .font(.system(size: 24))
                                     .fontWeight(.semibold)
@@ -123,7 +124,7 @@ struct RecipeList: View {
                                 .cornerRadius(15)
                                 .shadow(radius: 5)
                             
-                            NavigationLink(destination: RecipesView(recipeName: customMealText)) {
+                            NavigationLink(destination: RecipesView(recipeName: customMealText, bookmark: nil, fromBookmarks: false)) {
                                 Text("Submit")
                                     .font(.system(size: 24))
                                     .fontWeight(.semibold)

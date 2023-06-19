@@ -17,6 +17,7 @@ struct PersistenceController {
     let container: NSPersistentContainer
 
     init(inMemory: Bool = false) {
+        
         container = NSPersistentContainer(name: "be_fresh")
         if inMemory {
             container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
@@ -29,6 +30,7 @@ struct PersistenceController {
             }
         })
         container.viewContext.automaticallyMergesChangesFromParent = true
+        deleteBookmarks()
     }
     
     func deleteProduct(_ product: Product) {
@@ -99,6 +101,20 @@ struct PersistenceController {
             } catch {
                 print("Failed to save new product name: \(error.localizedDescription)")
             }
+        }
+    }
+    
+    func deleteBookmarks() {
+        let request: NSFetchRequest<BookMark> = BookMark.fetchRequest()
+        do {
+            let bookmarks = try container.viewContext.fetch(request)
+            for bookmark in bookmarks {
+                container.viewContext.delete(bookmark)
+            }
+            try container.viewContext.save()
+        } catch {
+            // Handle the error appropriately
+            print("Failed to delete bookmarks: \(error)")
         }
     }
 }

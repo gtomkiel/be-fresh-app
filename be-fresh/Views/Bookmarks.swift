@@ -3,6 +3,11 @@ import SwiftUI
 struct Bookmarks: View {
     @State private var text: String = ""
     @State private var isShowingSheet = false
+    @Environment(\.managedObjectContext) var viewContext
+    @FetchRequest(
+        sortDescriptors: [NSSortDescriptor(keyPath: \BookMark.bookmark, ascending: true)],
+        animation: .default)
+    private var bookmarks: FetchedResults<BookMark>
 
     var body: some View {
         VStack() {
@@ -16,55 +21,20 @@ struct Bookmarks: View {
             ScrollView {
                 VStack() {
                     VStack {
-                        Text("Recipe #1")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .fontWeight(.semibold)
-                            .font(.system(size: 24))
-
-                        Rectangle()
-                            .frame(height: 150)
-                            .foregroundColor(Color("greenColor"))
-                            .cornerRadius(15)
-                            .shadow(radius: 5)
-                    }
-                    
-                    VStack {
-                        Text("Recipe #2")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .fontWeight(.semibold)
-                            .font(.system(size: 24))
-
-                        Rectangle()
-                            .frame(height: 150)
-                            .foregroundColor(Color("greenColor"))
-                            .cornerRadius(15)
-                            .shadow(radius: 5)
-                    }
-                    
-                    VStack {
-                        Text("Recipe #3")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .fontWeight(.semibold)
-                            .font(.system(size: 24))
-
-                        Rectangle()
-                            .frame(height: 150)
-                            .foregroundColor(Color("greenColor"))
-                            .cornerRadius(15)
-                            .shadow(radius: 5)
-                    }
-                    
-                    VStack {
-                        Text("Recipe #4")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .fontWeight(.semibold)
-                            .font(.system(size: 24))
-
-                        Rectangle()
-                            .frame(height: 150)
-                            .foregroundColor(Color("greenColor"))
-                            .cornerRadius(15)
-                            .shadow(radius: 5)
+                        ForEach(bookmarks) { bookmark in
+                            NavigationLink(destination: RecipesView(recipeName: bookmark.title!, bookmark: bookmark, fromBookmarks: true)) {
+                                Text(String(bookmark.title ?? "No title"))
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .fontWeight(.semibold)
+                                    .font(.system(size: 24))
+                                
+                                Rectangle()
+                                    .frame(height: 150)
+                                    .foregroundColor(Color("greenColor"))
+                                    .cornerRadius(15)
+                                    .shadow(radius: 5)
+                            }
+                        }
                     }
                 }
             }
