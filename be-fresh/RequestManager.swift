@@ -30,7 +30,7 @@ struct Choice : Codable {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         // Don't push api key to github btw
-        request.addValue("Bearer API-KEY-GOES-HERE", forHTTPHeaderField: "Authorization")
+        request.addValue("Bearer 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", forHTTPHeaderField: "Authorization")
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = payload
 

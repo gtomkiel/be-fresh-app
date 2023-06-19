@@ -370,7 +370,7 @@ struct ProductsView: View {
                 print(currentDate)
             }
             let newProduct = Product(context: viewContext)
-            newProduct.productName = NameParser().getNameFromJSON()
+            newProduct.productName = name
             newProduct.expirationDate = currentDate
             Notification().sendNotification(date: currentDate, type: "time", title: "Product expiration", body: "Product \(String(describing: newProduct.productName!)) is expiring today")
             print("\(String(describing: newProduct.productName))")

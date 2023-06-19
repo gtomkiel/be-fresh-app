@@ -1,13 +1,26 @@
 import SwiftUI
+import CoreData
 
 struct RecipesView: View {
+    var bookmark: BookMark?
+    var fromBookmarks: Bool
     @StateObject private var api: ApiCall
     @State private var text = false
     @State private var launched = false
+    //var fromBookmarks: Bool
+    
+    @Environment(\.managedObjectContext) var viewContext
+    
+//    @FetchRequest(
+//        sortDescriptors: [NSSortDescriptor(keyPath: \BookMark.bookmark, ascending: true)],
+//        animation: .default)
+//    private var bookmarks: FetchedResults<BookMark>
 
     let recipeName: String
 
-    init(recipeName: String) {
+    init(recipeName: String, bookmark: BookMark?, fromBookmarks: Bool) {
+        self.bookmark = bookmark
+        self.fromBookmarks = fromBookmarks
         self.recipeName = recipeName
         self._api = StateObject(wrappedValue: ApiCall(
             prompt: "Give me formatted recipe for \(recipeName) with title at the beginning",
@@ -25,29 +38,51 @@ struct RecipesView: View {
             .fontWeight(.heavy)
             .padding(.bottom, 10)
             ScrollView {
-                if api.response.isEmpty {
-                    Rectangle()
-                        .foregroundColor(Color("greenColor"))
-                        .frame(height: 150)
-                        .cornerRadius(15)
-                        .shadow(radius: 5)
-                        .overlay {
-                            if api.response.isEmpty {
-                                ProgressView()
-                            } else {
-                                VStack {
-                                    Text(api.response)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                        .fontWeight(.medium)
-                                        .font(.system(size: 20))
-                                        .foregroundColor(Color.white)
-                                        .padding(10)
-                                    Spacer()
+                if self.fromBookmarks == false {
+                    if api.response.isEmpty {
+                        Rectangle()
+                            .foregroundColor(Color("greenColor"))
+                            .frame(height: 150)
+                            .cornerRadius(15)
+                            .shadow(radius: 5)
+                            .overlay {
+                                if api.response.isEmpty {
+                                    ProgressView()
+                                } else {
+                                    VStack {
+                                        Text(api.response)
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                            .fontWeight(.medium)
+                                            .font(.system(size: 20))
+                                            .foregroundColor(Color.white)
+                                            .padding(10)
+                                        Spacer()
+                                    }
                                 }
                             }
-                        }
+                    } else {
+                        Text(api.response)
+                            .fontWeight(.semibold)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .foregroundColor(Color.white)
+                            .padding(10)
+                            .background(
+                                Rectangle()
+                                    .foregroundColor(Color("greenColor"))
+                                    .cornerRadius(15)
+                                    .shadow(radius: 5)
+                            )
+                            .opacity(text ? 1.0 : 0.0)
+                            .onAppear {
+                                if !text {
+                                    withAnimation(Animation.spring().speed(0.8)) {
+                                        text.toggle()
+                                    }
+                                }
+                            }
+                    }
                 } else {
-                    Text(api.response)
+                    Text(self.bookmark!.bookmark!)
                         .fontWeight(.semibold)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .foregroundColor(Color.white)
@@ -67,9 +102,8 @@ struct RecipesView: View {
                             }
                         }
                 }
-            }
-            Spacer()
-        }
+            } // ScrollView
+        } // VStack
         .padding()
         .onAppear {
             if !launched {
@@ -80,19 +114,36 @@ struct RecipesView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: {
-                    // bookmark somehow
-                    // somehow is probably putting current api.response into CoreData i guess
+                    addBookmark(text: String(api.response), title: String(self.recipeName))
                 }) {
-                    Image(systemName: "bookmark")
-                    // also make this swap to bookmar.fill when its actually bookmarked
+                    if let bookmark = self.bookmark?.bookmark{
+                    }
+                    else{
+                        Image(systemName: "bookmark")
+                    }
                 }
             }
+        }
+    }
+    
+    private func addBookmark(text: String, title: String) {
+        withAnimation {
+            let newBookMark = BookMark(context: PersistenceController.shared.container.viewContext)
+            newBookMark.bookmark = text
+            newBookMark.title = title
+            do {
+                try PersistenceController.shared.container.viewContext.save()
+            } catch {
+                let nsError = error as NSError
+                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+            }
+            print(newBookMark)
         }
     }
 }
 
 struct RecipesView_Previews: PreviewProvider {
     static var previews: some View {
-        RecipesView(recipeName: "test")
+        RecipesView(recipeName: "test", bookmark: nil, fromBookmarks: false)
     }
 }

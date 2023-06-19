@@ -8,6 +8,7 @@ struct PersistenceController {
         let viewContext = result.container.viewContext
         
         let request: NSFetchRequest<Product> = Product.fetchRequest()
+        let requestBookmark: NSFetchRequest<BookMark> = BookMark.fetchRequest()
         
         
         return result
@@ -70,6 +71,48 @@ struct PersistenceController {
         } catch {
             // Handle the error appropriately
             print("Failed to fetch products: \(error)")
+        }
+    }
+    
+    func getAllProducts()-> String{
+        var allProductsString = ""
+        let request: NSFetchRequest<Product> = Product.fetchRequest()
+        do {
+            let products = try container.viewContext.fetch(request)
+            for product in products {
+                allProductsString += "\(String(describing: product.productName!)) "
+            }
+        } catch {
+            // Handle the error appropriately
+            print("Failed to fetch products: \(error)")
+        }
+        return allProductsString
+    }
+    
+    func saveBookmark(bookmark: BookMark, text: String){
+        let context = PersistenceController.shared.container.viewContext
+        context.perform {
+            bookmark.bookmark = text
+            do {
+                try context.save()
+                print("New product name saved successfully.")
+            } catch {
+                print("Failed to save new product name: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    func deleteBookmarks() {
+        let request: NSFetchRequest<BookMark> = BookMark.fetchRequest()
+        do {
+            let bookmarks = try container.viewContext.fetch(request)
+            for bookmark in bookmarks {
+                container.viewContext.delete(bookmark)
+            }
+            try container.viewContext.save()
+        } catch {
+            // Handle the error appropriately
+            print("Failed to delete bookmarks: \(error)")
         }
     }
 }
