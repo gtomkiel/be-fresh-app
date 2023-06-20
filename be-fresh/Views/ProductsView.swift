@@ -347,7 +347,17 @@ struct ProductsView: View {
             let newProduct = Product(context: viewContext)
             newProduct.productName = nameFromBarcode
             newProduct.expirationDate = expirationDate
-            Notification().sendNotification(date: expirationDate, type: "time", title: "Product expiration", body: "Product \(String(describing: newProduct.productName!)) is expiring today")
+            let daysToSubtract = UserDefaults.standard.integer(forKey: "ExpireDate")
+
+            let calendar = Calendar.current
+            var dateComponent = DateComponents()
+            dateComponent.day = -daysToSubtract
+
+            let expDate = newProduct.expirationDate
+            let newExpirationDate = calendar.date(byAdding: dateComponent, to: expDate!)
+            print("----------------------")
+            print(newExpirationDate)
+            Notification().sendNotification(date: newExpirationDate ?? Date(), type: "time", title: "Product expiration", body: "Product \(String(describing: newProduct.productName!)) is expiring today")
             print("\(String(describing: newProduct.productName))")
             do {
                 try viewContext.save()

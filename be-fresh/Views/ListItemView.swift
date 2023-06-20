@@ -35,8 +35,22 @@ struct ListItemView: View {
                         
                         Text(date)
                             .font(.system(size: 15))
+                        
                     }
                     .padding(.leading)
+                    Spacer()
+                    Button(action: {
+                        self.nutrition = true
+                    }) {
+                        HStack {
+                            Image(systemName: "list.clipboard")
+                        }
+                        .font(.title2)
+                        .foregroundColor(.white)
+                        .padding()
+                        .background(Color.purple)
+                        .cornerRadius(8)
+                    }
                     
                 }
                 .foregroundColor(Color.white)
@@ -64,19 +78,6 @@ struct ListItemView: View {
                     }
                     
                     Button(action: {
-                        self.nutrition = true
-                    }) {
-                        HStack {
-                            Image(systemName: "list.clipboard")
-                        }
-                        .font(.title2)
-                        .foregroundColor(.white)
-                        .padding()
-                        .background(Color.purple)
-                        .cornerRadius(8)
-                    }
-                    
-                    Button(action: {
                         PersistenceController.shared.deleteProduct(prdct)
                     }) {
                         HStack {
@@ -91,6 +92,7 @@ struct ListItemView: View {
                 }
             }
             .padding(10)
+            
             .sheet(isPresented: $nutrition) {
                 NutritionView(productName: prdct.productName ?? "nothing")
             }
