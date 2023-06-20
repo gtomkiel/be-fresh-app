@@ -1,5 +1,6 @@
 import CodeScanner
 import CoreData
+import EventKit
 import Foundation
 import SwiftUI
 
@@ -25,7 +26,6 @@ struct ProductsView: View {
     @State private var isSwiped = false
     @GestureState private var dragOffset: CGSize = .zero
     @State private var remove = false
-    init() {}
 
     var body: some View {
         NavigationView {
@@ -342,6 +342,33 @@ struct ProductsView: View {
         }
     }
 
+    private func calendarAdd(product: Product) {
+        let eventStore = EKEventStore()
+
+        eventStore.requestAccess(to: .event) { [weak eventStore] granted, _ in
+            guard granted else {
+                print("event: access denied")
+                return
+            }
+
+            guard let eventStore = eventStore else { return }
+
+            let event = EKEvent(eventStore: eventStore)
+            event.title = product.productName! + " expires!"
+            event.startDate = product.expirationDate
+            event.endDate = product.expirationDate
+            event.isAllDay = true
+            event.calendar = eventStore.defaultCalendarForNewEvents
+
+            do {
+                try eventStore.save(event, span: .thisEvent)
+                print("event: success")
+            } catch {
+                print("event: error")
+            }
+        }
+    }
+
     private func addItem(nameFromBarcode: String, expirationDate: Date) {
         withAnimation {
             let newProduct = Product(context: viewContext)
@@ -351,6 +378,7 @@ struct ProductsView: View {
             print("\(String(describing: newProduct.productName))")
             do {
                 try viewContext.save()
+                calendarAdd(product: newProduct)
             } catch {
                 let nsError = error as NSError
                 fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
