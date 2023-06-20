@@ -1,4 +1,5 @@
 import CoreData
+import Foundation
 import EventKit
 
 struct PersistenceController {
@@ -84,9 +85,17 @@ struct PersistenceController {
         let request: NSFetchRequest<Product> = Product.fetchRequest()
         do {
             let products = try container.viewContext.fetch(request)
+            let calendar = Calendar.current
+            var oneDayComponent = DateComponents()
+            oneDayComponent.day = 1
+            
             for product in products {
                 if let expDate = product.expirationDate {
-                    if expDate < Date() {
+                    let previousDay = calendar.date(byAdding: oneDayComponent, to: expDate)!
+                    print(expDate)
+                    print(previousDay)
+                    
+                    if previousDay < Date() {
                         container.viewContext.delete(product)
                     }
                 }
@@ -97,6 +106,7 @@ struct PersistenceController {
             print("Failed to fetch products: \(error)")
         }
     }
+
     
     func getAllProducts() -> String {
         var allProductsString = ""
