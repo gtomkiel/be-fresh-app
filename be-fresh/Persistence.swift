@@ -1,5 +1,6 @@
 import CoreData
 import Foundation
+import EventKit
 
 struct PersistenceController {
     static let shared = PersistenceController()
@@ -11,7 +12,6 @@ struct PersistenceController {
         let request: NSFetchRequest<Product> = Product.fetchRequest()
         let requestBookmark: NSFetchRequest<BookMark> = BookMark.fetchRequest()
         
-        
         return result
     }()
 
@@ -22,7 +22,7 @@ struct PersistenceController {
         if inMemory {
             container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
         }
-        container.loadPersistentStores(completionHandler: { (storeDescription, error) in
+        container.loadPersistentStores(completionHandler: { _, error in
             if let error = error as NSError? {
                 // Replace this implementation with code to handle the error appropriately.
                 // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
@@ -32,7 +32,31 @@ struct PersistenceController {
         container.viewContext.automaticallyMergesChangesFromParent = true
     }
     
+    func calendarRemove(product: Product) {
+        let eventStore = EKEventStore()
+        
+        eventStore.requestAccess(to: .event) { [weak eventStore] granted, _ in
+            guard granted else {
+                print("event: access denied")
+                return
+            }
+            
+            guard let eventStore = eventStore else { return }
+            
+            let match = eventStore.predicateForEvents(withStart: product.expirationDate!, end: product.expirationDate!, calendars: eventStore.calendars(for: .event))
+            
+            let event = eventStore.events(matching: match)
+            
+            do {
+                try eventStore.remove(event[0], span: .thisEvent)
+            } catch {
+                print("event: error")
+            }
+        }
+    }
+    
     func deleteProduct(_ product: Product) {
+        calendarRemove(product: product)
         container.viewContext.delete(product)
 
         do {
@@ -43,18 +67,18 @@ struct PersistenceController {
         }
     }
     
-    func savePrName(product: Product, name: String){
+    func savePrName(product: Product, name: String) {
         let context = PersistenceController.shared.container.viewContext
-            context.perform {
-                product.productName = name
+        context.perform {
+            product.productName = name
                 
-                do {
-                    try context.save()
-                    print("New product name saved successfully.")
-                } catch {
-                    print("Failed to save new product name: \(error.localizedDescription)")
-                }
+            do {
+                try context.save()
+                print("New product name saved successfully.")
+            } catch {
+                print("Failed to save new product name: \(error.localizedDescription)")
             }
+        }
     }
     
     func deleteoldProducts() {
@@ -84,7 +108,7 @@ struct PersistenceController {
     }
 
     
-    func getAllProducts()-> String{
+    func getAllProducts() -> String {
         var allProductsString = ""
         let request: NSFetchRequest<Product> = Product.fetchRequest()
         do {
@@ -99,7 +123,7 @@ struct PersistenceController {
         return allProductsString
     }
     
-    func saveBookmark(bookmark: BookMark, text: String){
+    func saveBookmark(bookmark: BookMark, text: String) {
         let context = PersistenceController.shared.container.viewContext
         context.perform {
             bookmark.bookmark = text
@@ -126,4 +150,3 @@ struct PersistenceController {
         }
     }
 }
-

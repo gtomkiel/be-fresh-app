@@ -30,10 +30,10 @@
 		646B5AF52A13728D00D3C6DB /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 646B5AF42A13728D00D3C6DB /* Preview Assets.xcassets */; };
 		646B5AF72A13728D00D3C6DB /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 646B5AF62A13728D00D3C6DB /* Persistence.swift */; };
 		646B5AFA2A13728D00D3C6DB /* be_fresh.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 646B5AF82A13728D00D3C6DB /* be_fresh.xcdatamodeld */; };
-		CE905A5B2A389231006F32C6 /* NutritionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE905A5A2A389231006F32C6 /* NutritionView.swift */; };
 		79AD12722A3753EF00379021 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AD12712A3753EF00379021 /* AboutView.swift */; };
 		79AD12742A37541400379021 /* AboutDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AD12732A37541400379021 /* AboutDetailView.swift */; };
 		79AD12762A3755B900379021 /* FirstContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79AD12752A3755B900379021 /* FirstContentView.swift */; };
+		CE905A5B2A389231006F32C6 /* NutritionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE905A5A2A389231006F32C6 /* NutritionView.swift */; };
 		CE9D36D72A370B7E00A07EE1 /* RecipeList.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9D36D62A370B7E00A07EE1 /* RecipeList.swift */; };
 /* End PBXBuildFile section */
 
@@ -61,10 +61,10 @@
 		646B5AF42A13728D00D3C6DB /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		646B5AF62A13728D00D3C6DB /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
 		646B5AF92A13728D00D3C6DB /* be_fresh.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = be_fresh.xcdatamodel; sourceTree = "<group>"; };
-		CE905A5A2A389231006F32C6 /* NutritionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionView.swift; sourceTree = "<group>"; };
 		79AD12712A3753EF00379021 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		79AD12732A37541400379021 /* AboutDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutDetailView.swift; sourceTree = "<group>"; };
 		79AD12752A3755B900379021 /* FirstContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstContentView.swift; sourceTree = "<group>"; };
+		CE905A5A2A389231006F32C6 /* NutritionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NutritionView.swift; sourceTree = "<group>"; };
 		CE9D36D62A370B7E00A07EE1 /* RecipeList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeList.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -418,6 +418,7 @@
 				DEVELOPMENT_TEAM = PSZLR7BATX;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "Access is required to integrate product list into calendar app";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Camera is required to scan the barcode";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -449,6 +450,7 @@
 				DEVELOPMENT_TEAM = PSZLR7BATX;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "Access is required to integrate product list into calendar app";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Camera is required to scan the barcode";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

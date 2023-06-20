@@ -1,5 +1,6 @@
 import CodeScanner
 import CoreData
+import EventKit
 import Foundation
 import SwiftUI
 
@@ -25,7 +26,6 @@ struct ProductsView: View {
     @State private var isSwiped = false
     @GestureState private var dragOffset: CGSize = .zero
     @State private var remove = false
-    init() {}
 
     var body: some View {
         NavigationView {
@@ -40,31 +40,33 @@ struct ProductsView: View {
                         }
                         .padding(.vertical, 20)
 
-                        Text("List of items")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .fontWeight(.semibold)
-                            .font(.system(size: 24))
+                        ScrollView {
+                            Text("List of items")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .fontWeight(.semibold)
+                                .font(.system(size: 24))
 
-                        ZStack(alignment: .topLeading) {
-                            RoundedRectangle(cornerRadius: 15)
-                                .fill(Color(red: 0.506, green: 0.718, blue: 0.345))
-                                .shadow(radius: 5)
-                                .frame(height: 602)
+                            ZStack(alignment: .topLeading) {
+                                RoundedRectangle(cornerRadius: 15)
+                                    .fill(Color(red: 0.506, green: 0.718, blue: 0.345))
+                                    .shadow(radius: 5)
+                                    .frame(height: 602)
 
-                            VStack(alignment: .leading) {
-                                ForEach(products) { product in
-                                    HStack {
-                                        let calendar = Calendar.current
-                                        let dateComponents = calendar.dateComponents([.year, .month, .day], from: product.expirationDate!)
+                                VStack(alignment: .leading) {
+                                    ForEach(products) { product in
+                                        HStack {
+                                            let calendar = Calendar.current
+                                            let dateComponents = calendar.dateComponents([.year, .month, .day], from: product.expirationDate!)
 
-                                        let formattedDate = "\(dateComponents.year ?? 0)/\(String(format: "%02d", dateComponents.month ?? 0))/\(String(format: "%02d", dateComponents.day ?? 0))"
-                                        ListItemView(name: product.productName ?? "error", date: String(describing: formattedDate), showLine: true, prdct: product, rem: remove, modification: true)
+                                            let formattedDate = "\(dateComponents.year ?? 0)/\(String(format: "%02d", dateComponents.month ?? 0))/\(String(format: "%02d", dateComponents.day ?? 0))"
+                                            ListItemView(name: product.productName ?? "error", date: String(describing: formattedDate), showLine: true, prdct: product, rem: remove, modification: true)
+                                        }
+                                        .onAppear {
+                                            remove = UserDefaults.standard.bool(forKey: "RemoveRename")
+                                        }
                                     }
-                                    .onAppear {
-                                        remove = UserDefaults.standard.bool(forKey: "RemoveRename")
-                                    }
+                                    Spacer()
                                 }
-                                Spacer()
                             }
                         }
                     }
@@ -342,6 +344,33 @@ struct ProductsView: View {
         }
     }
 
+    private func calendarAdd(product: Product) {
+        let eventStore = EKEventStore()
+
+        eventStore.requestAccess(to: .event) { [weak eventStore] granted, _ in
+            guard granted else {
+                print("event: access denied")
+                return
+            }
+
+            guard let eventStore = eventStore else { return }
+
+            let event = EKEvent(eventStore: eventStore)
+            event.title = product.productName! + " expires!"
+            event.startDate = product.expirationDate
+            event.endDate = product.expirationDate
+            event.isAllDay = true
+            event.calendar = eventStore.defaultCalendarForNewEvents
+
+            do {
+                try eventStore.save(event, span: .thisEvent)
+                print("event: success")
+            } catch {
+                print("event: error")
+            }
+        }
+    }
+
     private func addItem(nameFromBarcode: String, expirationDate: Date) {
         withAnimation {
             let newProduct = Product(context: viewContext)
@@ -361,6 +390,7 @@ struct ProductsView: View {
             print("\(String(describing: newProduct.productName))")
             do {
                 try viewContext.save()
+                calendarAdd(product: newProduct)
             } catch {
                 let nsError = error as NSError
                 fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
