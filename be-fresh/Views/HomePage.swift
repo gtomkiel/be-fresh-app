@@ -1,14 +1,13 @@
-import CoreData
 import SwiftUI
+import CoreData
 
 struct HomePage: View {
     @Environment(\.managedObjectContext) var viewContext
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \Product.productName, ascending: true)],
-        animation: .default
-    )
+        animation: .default)
     private var products: FetchedResults<Product>
-    // @EnvironmentObject var model: DefautlModel
+    //@EnvironmentObject var model: DefautlModel
     @StateObject var api = ApiCall(prompt: "Give me 5 recipe names in a unordered list using dots based on those products [chicken, tomato sauce, pasta, cheese, mushrooms] keep it short", temperature: "0")
     
     @State private var animate = false
@@ -17,8 +16,8 @@ struct HomePage: View {
     @State var daysToAdd = UserDefaults.standard.integer(forKey: "ExpireDate")
     
     var body: some View {
-        NavigationView {
-            GeometryReader { _ in
+        NavigationView(){
+            GeometryReader { geometry in
                 ZStack {
                     VStack {
                         HStack {
@@ -30,92 +29,93 @@ struct HomePage: View {
                         .padding(.vertical, 20)
                         .opacity(animate ? 1.0 : 0.0)
                         
-                        ScrollView {
-                            VStack {
-                                Text("Upcoming expire dates")
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .fontWeight(.semibold)
-                                    .font(.system(size: 24))
-                                Rectangle()
-                                    .foregroundColor(Color("greenColor"))
-                                    .frame(height: 264)
-                                    .cornerRadius(15)
-                                    .shadow(radius: 5)
-                                    .overlay(
-                                        VStack(alignment: .leading) {
-                                            ForEach(products) { product in
-                                                HStack {
-                                                    let calendar = Calendar.current
-                                                    let dateComponents = calendar.dateComponents([.year, .month, .day], from: product.expirationDate!)
-                                                    
-                                                    let formattedDate = "\(dateComponents.year ?? 0)/\(String(format: "%02d", dateComponents.month ?? 0))/\(String(format: "%02d", dateComponents.day ?? 0))"
-                                                    if calculateDate() <= product.expirationDate! {
-                                                        ListItemView(name: product.productName ?? "error", date: String(describing: formattedDate), showLine: true, prdct: product, rem: UserDefaults.standard.bool(forKey: "RemoveRename"), modification: false)
-                                                    }
+                        //<<<<<<< HEAD
+                        
+                        VStack {
+                            Text("Upcoming expire dates")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .fontWeight(.semibold)
+                                .font(.system(size: 24))
+                            Rectangle()
+                                .foregroundColor(Color("greenColor"))
+                                .frame(height: 264)
+                                .cornerRadius(15)
+                                .shadow(radius: 5)
+                                .overlay(
+                                    VStack(alignment: .leading) {
+                                        ForEach(products) { product in
+                                            HStack{
+                                                let calendar = Calendar.current
+                                                let dateComponents = calendar.dateComponents([.year, .month, .day], from: product.expirationDate!)
+
+                                                let formattedDate = "\(dateComponents.year ?? 0)/\(String(format: "%02d", dateComponents.month ?? 0))/\(String(format: "%02d", dateComponents.day ?? 0))"
+                                                if calculateDate(daysToAdd: daysToAdd) >= product.expirationDate!{
+                                                    ListItemView(name: product.productName ?? "error", date: String(describing: formattedDate), showLine: true, prdct: product, rem: UserDefaults.standard.bool(forKey: "RemoveRename"), modification: false)
                                                 }
                                             }
+                                        }
+                                        Spacer()
+                                    }
+                                )
+                        }
+                        .opacity(animate ? 1.0 : 0.0)
+                        .padding(.bottom, 20)
+                        
+                        
+                        VStack {
+                            Text("Todays recommendation")
+                                .fontWeight(.semibold)
+                                .font(.system(size: 24))
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            Rectangle()
+                                .foregroundColor(Color("greenColor"))
+                                .frame(height: 264)
+                                .cornerRadius(15)
+                                .shadow(radius: 5)
+                                .overlay{
+                                    if (api.response.isEmpty) {
+                                        ProgressView()
+                                    } else {
+                                        VStack {
+                                            Text(api.response)
+                                                .frame(maxWidth: .infinity, alignment: .leading)
+                                                .italic()
+                                                .font(.system(size: 20, weight: .bold))
+                                                .foregroundColor(Color.white)
+                                                .lineSpacing(25)
+                                                .padding(15)
                                             Spacer()
                                         }
-                                    )
-                            }
-                            .opacity(animate ? 1.0 : 0.0)
-                            .padding(.bottom, 20)
-                            
-                            VStack {
-                                Text("Todays recommendation")
-                                    .fontWeight(.semibold)
-                                    .font(.system(size: 24))
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                Rectangle()
-                                    .foregroundColor(Color("greenColor"))
-                                    .frame(height: 264)
-                                    .cornerRadius(15)
-                                    .shadow(radius: 5)
-                                    .overlay {
-                                        if api.response.isEmpty {
-                                            ProgressView()
-                                        } else {
-                                            VStack {
-                                                Text(api.response)
-                                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                                    .italic()
-                                                    .font(.system(size: 20, weight: .bold))
-                                                    .foregroundColor(Color.white)
-                                                    .lineSpacing(25)
-                                                    .padding(15)
-                                                Spacer()
-                                            }
-                                            .opacity(text ? 1.0 : 0.0)
-                                            .onAppear {
-                                                if !text {
-                                                    withAnimation(Animation.spring().speed(0.8)) {
-                                                        text.toggle()
-                                                    }
+                                        .opacity(text ? 1.0 : 0.0)
+                                        .onAppear {
+                                            if (!text){
+                                                withAnimation(Animation.spring().speed(0.8)) {
+                                                    text.toggle()
                                                 }
                                             }
                                             daysToAdd = UserDefaults.standard.integer(forKey: "ExpireDate")
                                         }
                                     }
-                            }
-                            .opacity(animate ? 1.0 : 0.0)
-                            .padding(.bottom, 20)
-                            Spacer()
+                                }
                         }
+                        .opacity(animate ? 1.0 : 0.0)
+                        .padding(.bottom, 20)
+                        Spacer()
                     }
                 }
             }
             .padding([.leading, .trailing])
             .background(Color(red: 253, green: 255, blue: 252))
             .onAppear {
-                if !animate {
+                if (!animate){
                     withAnimation(Animation.spring().speed(0.8)) {
                         animate.toggle()
                     }
                 }
             }
         }
-        .onAppear {
-            if !launched {
+        .onAppear() {
+            if (!launched) {
                 api.fetchData()
                 launched.toggle()
             }
