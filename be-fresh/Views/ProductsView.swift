@@ -40,31 +40,33 @@ struct ProductsView: View {
                         }
                         .padding(.vertical, 20)
 
-                        Text("List of items")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .fontWeight(.semibold)
-                            .font(.system(size: 24))
+                        ScrollView {
+                            Text("List of items")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .fontWeight(.semibold)
+                                .font(.system(size: 24))
 
-                        ZStack(alignment: .topLeading) {
-                            RoundedRectangle(cornerRadius: 15)
-                                .fill(Color(red: 0.506, green: 0.718, blue: 0.345))
-                                .shadow(radius: 5)
-                                .frame(height: 602)
+                            ZStack(alignment: .topLeading) {
+                                RoundedRectangle(cornerRadius: 15)
+                                    .fill(Color(red: 0.506, green: 0.718, blue: 0.345))
+                                    .shadow(radius: 5)
+                                    .frame(height: 602)
 
-                            VStack(alignment: .leading) {
-                                ForEach(products) { product in
-                                    HStack {
-                                        let calendar = Calendar.current
-                                        let dateComponents = calendar.dateComponents([.year, .month, .day], from: product.expirationDate!)
+                                VStack(alignment: .leading) {
+                                    ForEach(products) { product in
+                                        HStack {
+                                            let calendar = Calendar.current
+                                            let dateComponents = calendar.dateComponents([.year, .month, .day], from: product.expirationDate!)
 
-                                        let formattedDate = "\(dateComponents.year ?? 0)/\(String(format: "%02d", dateComponents.month ?? 0))/\(String(format: "%02d", dateComponents.day ?? 0))"
-                                        ListItemView(name: product.productName ?? "error", date: String(describing: formattedDate), showLine: true, prdct: product, rem: remove, modification: true)
+                                            let formattedDate = "\(dateComponents.year ?? 0)/\(String(format: "%02d", dateComponents.month ?? 0))/\(String(format: "%02d", dateComponents.day ?? 0))"
+                                            ListItemView(name: product.productName ?? "error", date: String(describing: formattedDate), showLine: true, prdct: product, rem: remove, modification: true)
+                                        }
+                                        .onAppear {
+                                            remove = UserDefaults.standard.bool(forKey: "RemoveRename")
+                                        }
                                     }
-                                    .onAppear {
-                                        remove = UserDefaults.standard.bool(forKey: "RemoveRename")
-                                    }
+                                    Spacer()
                                 }
-                                Spacer()
                             }
                         }
                     }
