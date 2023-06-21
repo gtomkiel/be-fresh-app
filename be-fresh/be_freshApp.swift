@@ -6,7 +6,10 @@ struct be_freshApp: App {
     @StateObject var defaultModel = DefautlModel()
         
     init() {
-        persistenceController.deleteoldProducts()
+        if (UserDefaults.standard.bool(forKey: "enableAutoDeleteProducts")) {
+            persistenceController.deleteoldProducts()
+        }
+        
         let parser = ApiParser()
         parser.getName(barcode: 9181991172523) { title in
             if let title = title {
