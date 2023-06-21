@@ -376,17 +376,29 @@ struct ProductsView: View {
             let newProduct = Product(context: viewContext)
             newProduct.productName = nameFromBarcode
             newProduct.expirationDate = expirationDate
-            let daysToSubtract = UserDefaults.standard.integer(forKey: "ExpireDate")
+            //the code below is for the real life, for presentation i need to change it.
+//            let daysToSubtract = UserDefaults.standard.integer(forKey: "ExpireDate")
+//
+//            let calendar = Calendar.current
+//            var dateComponent = DateComponents()
+//            dateComponent.day = -daysToSubtract
+//
+//            let expDate = newProduct.expirationDate
+//            let newExpirationDate = calendar.date(byAdding: dateComponent, to: expDate!)
+//            print("----------------------")
+//            print(newExpirationDate)
+            //code for presentation
+            var currentDate = Date()
 
             let calendar = Calendar.current
-            var dateComponent = DateComponents()
-            dateComponent.day = -daysToSubtract
+            let oneHour: TimeInterval = 80
 
-            let expDate = newProduct.expirationDate
-            let newExpirationDate = calendar.date(byAdding: dateComponent, to: expDate!)
-            print("----------------------")
-            print(newExpirationDate)
-            Notification().sendNotification(date: newExpirationDate ?? Date(), type: "time", title: "Product expiration", body: "Product \(String(describing: newProduct.productName!)) is expiring today")
+            if let newDate = calendar.date(byAdding: .second, value: Int(oneHour), to: currentDate) {
+                currentDate = newDate
+                print("hrfiqehrg")
+                print(currentDate)
+            }
+            Notification().sendNotification(date: currentDate, type: "time", title: "Product expiration", body: "Product \(String(describing: newProduct.productName!)) is expiring today")
             print("\(String(describing: newProduct.productName))")
             do {
                 try viewContext.save()
