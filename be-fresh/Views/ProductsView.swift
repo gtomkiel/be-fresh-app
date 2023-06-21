@@ -1,11 +1,14 @@
 import CodeScanner
 import CoreData
+import CoreImage
+import CoreImage.CIFilterBuiltins
 import EventKit
 import Foundation
 import SwiftUI
 
 struct ProductsView: View {
     let parser = ApiParser()
+    let api = shareApi()
     @State private var productName = ""
     @State private var expiryDate = Date()
     @State private var isManually = false
@@ -19,6 +22,10 @@ struct ProductsView: View {
     @State private var isShowingSheet = false
     @State private var isShowingCamera = false
     @State private var isShowingDateInput = false
+    @State private var isProductsOverlay = false
+    @State private var isShareOverlay = false
+    @State private var isImportOverlay = false
+    @State private var isExportOverlay = false
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \Product.productName, ascending: true)],
         animation: .default)
@@ -26,6 +33,8 @@ struct ProductsView: View {
     @State private var isSwiped = false
     @GestureState private var dragOffset: CGSize = .zero
     @State private var remove = false
+    @State private var productList = String()
+    @State private var qrCodeImage: UIImage?
 
     var body: some View {
         NavigationView {
@@ -76,9 +85,9 @@ struct ProductsView: View {
                         HStack {
                             Spacer()
                             Button(action: {
-                                isShowingSheet = true
+                                isProductsOverlay = true
                             }) {
-                                Image(systemName: "plus.circle.fill")
+                                Image(systemName: "ellipsis.circle.fill")
                                     .resizable()
                                     .frame(width: 64, height: 64)
                                     .foregroundColor(.black)
@@ -90,6 +99,111 @@ struct ProductsView: View {
                     }
                 }
                 .padding([.leading, .trailing])
+                .sheet(isPresented: $isProductsOverlay) {
+                    VStack {
+                        Text("Options")
+                            .fontWeight(.heavy)
+                            .font(.system(size: 36))
+                            .padding(.bottom, 20)
+                        Spacer()
+                        Rectangle()
+                            .foregroundColor(Color("greenColor"))
+                            .cornerRadius(15)
+                            .shadow(radius: 5)
+                            .overlay {
+                                Button("Add product") {
+                                    isProductsOverlay = false
+                                    isShowingSheet = true
+                                }
+                                .foregroundColor(.white)
+                                .fontWeight(.semibold)
+                                .font(.system(size: 24))
+                            }
+                        Rectangle()
+                            .foregroundColor(Color("greenColor"))
+                            .cornerRadius(15)
+                            .shadow(radius: 5)
+                            .overlay {
+                                Button("Share list") {
+                                    isProductsOverlay = false
+                                    isShareOverlay = true
+                                }
+                                .foregroundColor(.white)
+                                .fontWeight(.semibold)
+                                .font(.system(size: 24))
+                            }
+                    }
+                    .padding()
+                    .presentationDetents([.fraction(0.35)])
+                }
+                .sheet(isPresented: $isShareOverlay) {
+                    VStack {
+                        Text("Share products")
+                            .fontWeight(.heavy)
+                            .font(.system(size: 36))
+                            .padding(.bottom, 20)
+                        Spacer()
+                        Rectangle()
+                            .foregroundColor(Color("greenColor"))
+                            .cornerRadius(15)
+                            .shadow(radius: 5)
+                            .overlay {
+                                Button("Import products") {
+                                    isShareOverlay = false
+                                    isImportOverlay = true
+                                }
+                                .foregroundColor(.white)
+                                .fontWeight(.semibold)
+                                .font(.system(size: 24))
+                            }
+                        Rectangle()
+                            .foregroundColor(Color("greenColor"))
+                            .cornerRadius(15)
+                            .shadow(radius: 5)
+                            .overlay {
+                                Button("Share products") {
+                                    isShareOverlay = false
+                                    isExportOverlay = true
+
+                                    api.shareLink(pasteData: PersistenceController.shared.getAllProductsCSV()) { response, error in
+                                        if let error = error {
+                                            print(error)
+                                        } else if let response = response {
+                                            self.qrCodeImage = generateQRCode(from: response)
+                                        }
+                                    }
+                                }
+                                .foregroundColor(.white)
+                                .fontWeight(.semibold)
+                                .font(.system(size: 24))
+                            }
+                    }
+                    .padding()
+                    .presentationDetents([.fraction(0.35)])
+                }
+                .sheet(isPresented: $isExportOverlay, onDismiss: {
+                    self.isExportOverlay = false
+                    self.qrCodeImage = nil
+                }, content: {
+                    VStack {
+                        Text("Scan the QR code")
+                            .fontWeight(.heavy)
+                            .font(.system(size: 36))
+                            .padding([.bottom, .top], 20)
+
+                        if qrCodeImage != nil {
+                            Image(uiImage: qrCodeImage!)
+                                .resizable()
+                                .interpolation(.none)
+                                .scaledToFit()
+                                .frame(width: 200, height: 200)
+                        } else {
+                            ProgressView()
+                        }
+                    }
+                    .padding()
+                    .presentationDetents([.fraction(0.35)])
+                })
                 .sheet(isPresented: $isShowingSheet) {
                     VStack {
                         Text("Add Product")
@@ -319,8 +433,30 @@ struct ProductsView: View {
                     .padding()
                     .presentationDetents([.fraction(0.35)])
                 }
+                .onAppear {}
             }
         }
+    }
+
+    func generateShareLink() -> String {
+        let allProducts = PersistenceController.shared.getAllProductsCSV()
+        print(allProducts)
+        return allProducts
+    }
+
+    func generateQRCode(from string: String) -> UIImage {
+        let context = CIContext()
+        let filter = CIFilter.qrCodeGenerator()
+
+        filter.message = Data(string.utf8)
+
+        if let outputImage = filter.outputImage {
+            if let cgimg = context.createCGImage(outputImage, from: outputImage.extent) {
+                return UIImage(cgImage: cgimg)
+            }
+        }
+
+        return UIImage(systemName: "exclamationmark.triangle.fill") ?? UIImage()
     }
 
     func handleScan(result: Result<ScanResult, ScanError>) {
