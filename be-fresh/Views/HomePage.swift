@@ -21,7 +21,7 @@ struct HomePage: View {
                 ZStack {
                     VStack {
                         HStack {
-                            Text("Hello user")
+                            Text("Welcome")
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .fontWeight(.heavy)
                                 .font(.system(size: 48))
