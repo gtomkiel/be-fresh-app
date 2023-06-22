@@ -4,6 +4,7 @@ struct SettingsView: View {
     @State private var showStatus = UserDefaults.standard.bool(forKey: "RemoveRename")
     @State private var expireDate = UserDefaults.standard.integer(forKey: "ExpireDate")
     @State private var disableNotification = UserDefaults.standard.bool(forKey: "DisableNotification")
+    @State private var enableAutoDeleteProducts = UserDefaults.standard.bool(forKey: "enableAutoDeleteProducts")
     @State private var isEditing = false
     @State private var showStatus2 = true
     @State private var showStatus3 = true
@@ -78,10 +79,12 @@ struct SettingsView: View {
                     
                     Rectangle()
                         .frame(height: 50)
-                        .foregroundColor(Color(red: 217, green: 217, blue: 217))
+                        .foregroundColor(Color(red: 217, green: 217, blue :217))
                         .cornerRadius(15)
                         .overlay {
-                            Toggle("Toggle option 2", isOn: $showStatus2)
+                            Toggle("Auto delete expiration products", isOn: $enableAutoDeleteProducts)
+                        }.onChange(of: enableAutoDeleteProducts) { newValue in
+                            UserDefaults.standard.set(newValue, forKey: "enableAutoDeleteProducts")
                         }
                     
                     Rectangle()
