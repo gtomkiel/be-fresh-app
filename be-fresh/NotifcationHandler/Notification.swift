@@ -16,10 +16,11 @@ class Notification {
     }
     
     func sendNotification(date: Date, type: String, timeInterval: Double = 10, title: String, body: String) {
-        if !UserDefaults.standard.bool(forKey: "disableNotification") {
-            return;
-        }
-        
+//        if UserDefaults.standard.bool(forKey: "disableNotification") == false{
+//            print("notification will be not granted aaaaaaaaa")
+//            return;
+//        }
+        askPerm()
         print("trigger...")
 //        if permissionNotofication == true{
         var trigger: UNNotificationTrigger?
