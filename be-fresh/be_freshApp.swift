@@ -10,14 +10,14 @@ struct be_freshApp: App {
             persistenceController.deleteoldProducts()
         }
         
-        let parser = ApiParser()
-        parser.getName(barcode: 9181991172523) { title in
-            if let title = title {
-                 print("Title: \(title)")
-            } else {
-                print("No title found")
-            }
-        }
+//        let parser = ApiParser()
+//        parser.getName(barcode: 9181991172523) { title in
+//            if let title = title {
+//                 print("Title: \(title)")
+//            } else {
+//                print("No title found")
+//            }
+//        }
     }
 
     var body: some Scene {

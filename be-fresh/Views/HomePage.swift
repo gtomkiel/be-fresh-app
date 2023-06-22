@@ -42,19 +42,21 @@ struct HomePage: View {
                                 .cornerRadius(15)
                                 .shadow(radius: 5)
                                 .overlay(
-                                    VStack(alignment: .leading) {
-                                        ForEach(products) { product in
-                                            HStack{
-                                                let calendar = Calendar.current
-                                                let dateComponents = calendar.dateComponents([.year, .month, .day], from: product.expirationDate!)
-
-                                                let formattedDate = "\(dateComponents.year ?? 0)/\(String(format: "%02d", dateComponents.month ?? 0))/\(String(format: "%02d", dateComponents.day ?? 0))"
-                                                if calculateDate(daysToAdd: daysToAdd) >= product.expirationDate!{
-                                                    ListItemView(name: product.productName ?? "error", date: String(describing: formattedDate), showLine: true, prdct: product, rem: UserDefaults.standard.bool(forKey: "RemoveRename"), modification: false)
+                                    ScrollView{
+                                        VStack(alignment: .leading) {
+                                            ForEach(products) { product in
+                                                HStack{
+                                                    let calendar = Calendar.current
+                                                    let dateComponents = calendar.dateComponents([.year, .month, .day], from: product.expirationDate!)
+                                                    
+                                                    let formattedDate = "\(dateComponents.year ?? 0)/\(String(format: "%02d", dateComponents.month ?? 0))/\(String(format: "%02d", dateComponents.day ?? 0))"
+                                                    if calculateDate(daysToAdd: daysToAdd) >= product.expirationDate!{
+                                                        ListItemView(name: product.productName ?? "error", date: String(describing: formattedDate), showLine: true, prdct: product, rem: UserDefaults.standard.bool(forKey: "RemoveRename"), modification: false)
+                                                    }
                                                 }
                                             }
+                                            Spacer()
                                         }
-                                        Spacer()
                                     }
                                 )
                         }
