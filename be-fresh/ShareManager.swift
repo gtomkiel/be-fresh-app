@@ -19,4 +19,32 @@ import Foundation
         }
         task.resume()
     }
+    
+    func getData(sharedUrl: String, completion: @escaping (String?, Error?) -> Void) {
+        guard let lastComponent = sharedUrl.components(separatedBy: "/").last,
+              let url = URL(string: "https://pastebin.com/raw/\(lastComponent)")
+        else {
+            completion(nil, NSError(domain: "", code: -1, userInfo: ["Error": "Invalid URL"]))
+            return
+        }
+
+        let task = URLSession.shared.dataTask(with: url) { data, _, error in
+            if let error = error {
+                completion(nil, error)
+            } else {
+                if let responseData = data {
+                    if let responseBody = String(data: responseData, encoding: .utf8) {
+                        completion(responseBody, nil)
+                    } else {
+                        let error = NSError(domain: "", code: -2, userInfo: ["Error": "Couldn't decode the response"])
+                        completion(nil, error)
+                    }
+                } else {
+                    let error = NSError(domain: "", code: -3, userInfo: ["Error": "No data received"])
+                    completion(nil, error)
+                }
+            }
+        }
+        task.resume()
+    }
 }
