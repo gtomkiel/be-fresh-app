@@ -15,10 +15,8 @@ struct NextContentView: View {
                     .aspectRatio(contentMode:  .fit)
                     .padding(.bottom, 35.0)
                     .frame(width: 300.0, height: 300.0)
-                Text("Lorem ipsum dolor sit amet, consectetur adipiscing elitIn molestie lacus ac congue")
-                Text("pellentesque Donec")
+                Text("This app is powered by artificial intelligence to provide endless creative recipes personalized for you!")
                 Spacer(minLength: 30)
-//                NavigationLink(destination: HomePage()) {
                     Text("Start")
                         .fontWeight(.bold)
                         .font(.system(size: 20))
