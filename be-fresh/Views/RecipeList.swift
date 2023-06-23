@@ -59,7 +59,7 @@ struct RecipeList: View {
                     } else {
                         let list = api.response.components(separatedBy: ",")
                         ForEach(list, id: \.self) { item in
-                            NavigationLink(destination: RecipesView(recipeName: item, bookmark: nil, fromBookmarks: false)) {
+                            NavigationLink(destination: RecipesView(recipeName: item, bookmark: nil, fromBookmarks: false, delete: UserDefaults.standard.bool(forKey: "RemvoeRename"))) {
                                 Text(item)
                                     .font(.system(size: 24))
                                     .fontWeight(.semibold)
@@ -124,7 +124,7 @@ struct RecipeList: View {
                                 .cornerRadius(15)
                                 .shadow(radius: 5)
                             
-                            NavigationLink(destination: RecipesView(recipeName: customMealText, bookmark: nil, fromBookmarks: false)) {
+                            NavigationLink(destination: RecipesView(recipeName: customMealText, bookmark: nil, fromBookmarks: false, delete: UserDefaults.standard.bool(forKey: "RemoveRename"))) {
                                 Text("Submit")
                                     .font(.system(size: 24))
                                     .fontWeight(.semibold)

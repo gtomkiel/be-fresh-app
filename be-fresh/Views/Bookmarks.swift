@@ -21,7 +21,7 @@ struct Bookmarks: View {
             ScrollView {
                 VStack() {
                     ForEach(bookmarks) { bookmark in
-                        NavigationLink(destination: RecipesView(recipeName: bookmark.title!, bookmark: bookmark, fromBookmarks: true)) {
+                        NavigationLink(destination: RecipesView(recipeName: bookmark.title!, bookmark: bookmark, fromBookmarks: true, delete: UserDefaults.standard.bool(forKey: "RemoveRename"))) {
                             VStack(){
                                 Rectangle()
                                 .frame(height: 150)

@@ -149,4 +149,15 @@ struct PersistenceController {
             print("Failed to delete bookmarks: \(error)")
         }
     }
+    
+    func deleteBookmark(bookmakr: BookMark){
+        container.viewContext.delete(bookmakr)
+
+        do {
+            try container.viewContext.save()
+        } catch {
+            // Handle the error appropriately
+            print("Failed to delete product: \(error)")
+        }
+    }
 }
