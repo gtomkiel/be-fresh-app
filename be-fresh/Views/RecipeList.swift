@@ -1,28 +1,19 @@
 import SwiftUI
 
 struct RecipeList: View {
-    // @FetchRequest(
-//        sortDescriptors: [NSSortDescriptor(keyPath: \Product.productName, ascending: true)],
-//        animation: .default)
-    // private var fetchedProducts: FetchedResults<Product>
-    // @StateObject var api: ApiCall
-
     @StateObject var api: ApiCall
     var allProducts = PersistenceController.shared.getAllProducts()
 
     init(allProducts: String) {
         self.allProducts = allProducts
         self._api = StateObject(wrappedValue: ApiCall(
-            prompt: "Give me 5 recipe names separated by comma based on those products \(allProducts)",
+            prompt: "Give me 5 recipe names using only text without styling and separated by comma based on those products \(allProducts)",
             temperature: "0.7"
         ))
-        print("euirgkje2rgh;eorg")
-        print(allProducts)
     }
     
-    // "Give me 5 recipe names separated by comma based on those products
-    
     @State private var isShowingSheet = false
+    @State private var customDetails = false
     @State private var customMealText = ""
     
     @State private var launched = false
@@ -34,46 +25,46 @@ struct RecipeList: View {
             GeometryReader { _ in
                 ZStack {
                     VStack {
-                HStack {
-                    Text("Recipes")
-                    Spacer()
-                }
-                .font(.system(size: 48))
-                .fontWeight(.heavy)
-                .padding(.vertical, 20)
+                        HStack {
+                            Text("Recipes")
+                            Spacer()
+                        }
+                        .font(.system(size: 48))
+                        .fontWeight(.heavy)
+                        .padding(.vertical, 20)
                 
-                Text("Recipes based on your products")
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .fontWeight(.semibold)
-                    .font(.system(size: 24))
+                        Text("Recipes based on your products")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .fontWeight(.semibold)
+                            .font(.system(size: 24))
                 
-                ScrollView {
-                    if api.response.isEmpty {
-                        Rectangle()
-                            .foregroundColor(Color("greenColor"))
-                            .frame(height: 150)
-                            .cornerRadius(15)
-                            .shadow(radius: 5)
-                            .overlay {
-                                ProgressView()
-                            }
-                    } else {
-                        let list = api.response.components(separatedBy: ",")
-                        ForEach(list, id: \.self) { item in
-                            NavigationLink(destination: RecipesView(recipeName: item, bookmark: nil, fromBookmarks: false, delete: UserDefaults.standard.bool(forKey: "RemvoeRename"))) {
-                                Text(item)
-                                    .font(.system(size: 24))
-                                    .fontWeight(.semibold)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .fixedSize(horizontal: false, vertical: true)
-                                    .foregroundColor(Color.white)
-                                    .padding(20)
-                                    .background(
-                                        Rectangle()
-                                            .foregroundColor(Color("greenColor"))
-                                            .cornerRadius(15)
-                                            .shadow(radius: 5)
-                                    )
+                        ScrollView {
+                            if api.response.isEmpty {
+                                Rectangle()
+                                    .foregroundColor(Color("greenColor"))
+                                    .frame(height: 150)
+                                    .cornerRadius(15)
+                                    .shadow(radius: 5)
+                                    .overlay {
+                                        ProgressView()
+                                    }
+                            } else {
+                                let list = api.response.components(separatedBy: ",")
+                                ForEach(list, id: \.self) { item in
+                                    NavigationLink(destination: RecipesView(recipeName: item, bookmark: nil, fromBookmarks: false, delete: UserDefaults.standard.bool(forKey: "RemvoeRename"))) {
+                                        Text(item)
+                                            .font(.system(size: 24))
+                                            .fontWeight(.semibold)
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                            .fixedSize(horizontal: false, vertical: true)
+                                            .foregroundColor(Color.white)
+                                            .padding(20)
+                                            .background(
+                                                Rectangle()
+                                                    .foregroundColor(Color("greenColor"))
+                                                    .cornerRadius(15)
+                                                    .shadow(radius: 5)
+                                            )
                                     }
                                 }
                             }
@@ -121,30 +112,37 @@ struct RecipeList: View {
                                 .background(Color("greenColor"))
                                 .cornerRadius(15)
                                 .shadow(radius: 5)
-                            
-                            NavigationLink(destination: RecipesView(recipeName: customMealText, bookmark: nil, fromBookmarks: false, delete: UserDefaults.standard.bool(forKey: "RemoveRename"))) {
-                                Text("Submit")
-                                    .font(.system(size: 24))
-                                    .fontWeight(.semibold)
-                                    .frame(maxWidth: .infinity)
-                                    .foregroundColor(Color.white)
-                                    .padding(20)
-                                    .background(
-                                        Rectangle()
-                                            .foregroundColor(Color("greenColor"))
-                                            .cornerRadius(15)
-                                            .shadow(radius: 5)
-                                    )
-                            }
                         }
-                        .padding()
-                        .presentationDetents([.fraction(0.45)])
+                        
+                        Button("Submit") {
+                            self.isShowingSheet = false
+                            self.customDetails = true
+                        }
+                        .font(.system(size: 24))
+                        .fontWeight(.semibold)
+                        .frame(maxWidth: .infinity)
+                        .foregroundColor(Color.white)
+                        .padding(20)
+                        .background(
+                            Rectangle()
+                                .foregroundColor(Color("greenColor"))
+                                .cornerRadius(15)
+                                .shadow(radius: 5)
+                        )
                     }
-                    
-                    Spacer()
+                    .padding()
                 }
+                .presentationDetents([.fraction(0.35)])
             }
+            .sheet(isPresented: $customDetails, onDismiss: {
+                self.customDetails = false
+            }, content: {
+                NavigationView {
+                    RecipesView(recipeName: customMealText, bookmark: nil, fromBookmarks: false, delete: UserDefaults.standard.bool(forKey: "RemoveRename"))
+                }
+            })
         }
+        .accentColor(Color("greenColor"))
     }
 }
 

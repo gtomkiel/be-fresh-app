@@ -422,8 +422,8 @@
 				DEVELOPMENT_TEAM = PSZLR7BATX;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSCalendarsUsageDescription = "Access is required to integrate product list into calendar app";
-				INFOPLIST_KEY_NSCameraUsageDescription = "Camera is required to scan the barcode";
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "Access is required for calendar integration";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Camera is required for code scanning";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -454,8 +454,8 @@
 				DEVELOPMENT_TEAM = PSZLR7BATX;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSCalendarsUsageDescription = "Access is required to integrate product list into calendar app";
-				INFOPLIST_KEY_NSCameraUsageDescription = "Camera is required to scan the barcode";
+				INFOPLIST_KEY_NSCalendarsUsageDescription = "Access is required for calendar integration";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Camera is required for code scanning";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

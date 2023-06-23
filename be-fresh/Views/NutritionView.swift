@@ -10,7 +10,7 @@ struct NutritionView: View {
     init(productName: String) {
         self.productName = productName
         self._api = StateObject(wrappedValue: ApiCall(
-            prompt: "Give me nutrition value for \(productName)",
+            prompt: "Give me nutrition value for \(productName) in a list without any additional text",
             temperature: "0.7"
         ))
     }
@@ -51,6 +51,7 @@ struct NutritionView: View {
                 }
             }
         }
+        .presentationDetents([.fraction(0.6)])
         .padding()
         .onAppear {
             if !launched {

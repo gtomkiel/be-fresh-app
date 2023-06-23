@@ -85,7 +85,6 @@ struct ListItemView: View {
             .sheet(isPresented: $nutrition) {
                 NutritionView(productName: prdct.productName ?? "nothing")
             }
-            .presentationDetents([.fraction(0.35)]) // does nothing for some reason
         }
     }
 }

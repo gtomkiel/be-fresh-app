@@ -1,5 +1,5 @@
-import SwiftUI
 import CoreData
+import SwiftUI
 
 struct RecipesView: View {
     var delete: Bool
@@ -8,14 +8,10 @@ struct RecipesView: View {
     @StateObject private var api: ApiCall
     @State private var text = false
     @State private var launched = false
-    //var fromBookmarks: Bool
-    
+    @State private var saved = false
+
     @Environment(\.managedObjectContext) var viewContext
-    
-//    @FetchRequest(
-//        sortDescriptors: [NSSortDescriptor(keyPath: \BookMark.bookmark, ascending: true)],
-//        animation: .default)
-//    private var bookmarks: FetchedResults<BookMark>
+    @Environment(\.presentationMode) var presentationMode
 
     let recipeName: String
 
@@ -84,7 +80,7 @@ struct RecipesView: View {
                             }
                     }
                 } else {
-                    Text(self.bookmark!.bookmark!)
+                    Text(self.bookmark!.bookmark ?? "")
                         .fontWeight(.semibold)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .foregroundColor(Color.white)
@@ -104,8 +100,8 @@ struct RecipesView: View {
                             }
                         }
                 }
-            } // ScrollView
-        } // VStack
+            }
+        }
         .padding()
         .onAppear {
             if !launched {
@@ -115,9 +111,10 @@ struct RecipesView: View {
         }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                if self.delete == true && self.fromBookmarks == true{
+                if self.delete == true && self.fromBookmarks == true {
                     Button(action: {
                         PersistenceController.shared.deleteBookmark(bookmakr: self.bookmark!)
+                        presentationMode.wrappedValue.dismiss()
                     }) {
                         HStack {
                             Image(systemName: "trash")
@@ -130,17 +127,23 @@ struct RecipesView: View {
                 }
                 Button(action: {
                     addBookmark(text: String(api.response), title: String(self.recipeName))
+                    self.saved = true
+
                 }) {
-                    if let bookmark = self.bookmark?.bookmark{
-                    }
-                    else{
-                        Image(systemName: "bookmark")
+                    if let bookmark = self.bookmark?.bookmark {}
+                    else {
+                        if self.saved {
+                            Image(systemName: "bookmark.fill")
+                        } else {
+                            Image(systemName: "bookmark")
+                        }
                     }
                 }
             }
         }
+        .accentColor(Color("greenColor"))
     }
-    
+
     private func addBookmark(text: String, title: String) {
         withAnimation {
             let newBookMark = BookMark(context: PersistenceController.shared.container.viewContext)
