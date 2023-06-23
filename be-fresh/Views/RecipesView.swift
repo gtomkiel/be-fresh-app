@@ -2,6 +2,7 @@ import SwiftUI
 import CoreData
 
 struct RecipesView: View {
+    var delete: Bool
     var bookmark: BookMark?
     var fromBookmarks: Bool
     @StateObject private var api: ApiCall
@@ -18,10 +19,11 @@ struct RecipesView: View {
 
     let recipeName: String
 
-    init(recipeName: String, bookmark: BookMark?, fromBookmarks: Bool) {
+    init(recipeName: String, bookmark: BookMark?, fromBookmarks: Bool, delete: Bool) {
         self.bookmark = bookmark
         self.fromBookmarks = fromBookmarks
         self.recipeName = recipeName
+        self.delete = delete
         self._api = StateObject(wrappedValue: ApiCall(
             prompt: "Give me formatted recipe for \(recipeName) with title at the beginning",
             temperature: "0.7"
@@ -113,6 +115,19 @@ struct RecipesView: View {
         }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
+                if self.delete == true && self.fromBookmarks == true{
+                    Button(action: {
+                        PersistenceController.shared.deleteBookmark(bookmakr: self.bookmark!)
+                    }) {
+                        HStack {
+                            Image(systemName: "trash")
+                                .font(.system(size: 15))
+                        }
+                        .padding()
+                        .background(Color.white)
+                        .cornerRadius(8)
+                    }
+                }
                 Button(action: {
                     addBookmark(text: String(api.response), title: String(self.recipeName))
                 }) {
@@ -144,6 +159,6 @@ struct RecipesView: View {
 
 struct RecipesView_Previews: PreviewProvider {
     static var previews: some View {
-        RecipesView(recipeName: "test", bookmark: nil, fromBookmarks: false)
+        RecipesView(recipeName: "test", bookmark: nil, fromBookmarks: false, delete: UserDefaults.standard.bool(forKey: "RemoveRename"))
     }
 }

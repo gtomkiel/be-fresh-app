@@ -34,46 +34,46 @@ struct RecipeList: View {
             GeometryReader { _ in
                 ZStack {
                     VStack {
-                        HStack {
-                            Text("Recipes")
-                            Spacer()
-                        }
-                        .font(.system(size: 48))
-                        .fontWeight(.heavy)
-                        .padding(.vertical, 20)
-                        
-                        Text("Recipes based on your products")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .fontWeight(.semibold)
-                            .font(.system(size: 24))
-                        
-                        ScrollView {
-                            if api.response.isEmpty {
-                                Rectangle()
-                                    .foregroundColor(Color("greenColor"))
-                                    .frame(height: 150)
-                                    .cornerRadius(15)
-                                    .shadow(radius: 5)
-                                    .overlay {
-                                        ProgressView()
-                                    }
-                            } else {
-                                let list = api.response.components(separatedBy: ",")
-                                ForEach(list, id: \.self) { item in
-                                    NavigationLink(destination: RecipesView(recipeName: item, bookmark: nil, fromBookmarks: false)) {
-                                        Text(item)
-                                            .font(.system(size: 24))
-                                            .fontWeight(.semibold)
-                                            .frame(maxWidth: .infinity, alignment: .leading)
-                                            .fixedSize(horizontal: false, vertical: true)
-                                            .foregroundColor(Color.white)
-                                            .padding(20)
-                                            .background(
-                                                Rectangle()
-                                                    .foregroundColor(Color("greenColor"))
-                                                    .cornerRadius(15)
-                                                    .shadow(radius: 5)
-                                            )
+                HStack {
+                    Text("Recipes")
+                    Spacer()
+                }
+                .font(.system(size: 48))
+                .fontWeight(.heavy)
+                .padding(.vertical, 20)
+                
+                Text("Recipes based on your products")
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .fontWeight(.semibold)
+                    .font(.system(size: 24))
+                
+                ScrollView {
+                    if api.response.isEmpty {
+                        Rectangle()
+                            .foregroundColor(Color("greenColor"))
+                            .frame(height: 150)
+                            .cornerRadius(15)
+                            .shadow(radius: 5)
+                            .overlay {
+                                ProgressView()
+                            }
+                    } else {
+                        let list = api.response.components(separatedBy: ",")
+                        ForEach(list, id: \.self) { item in
+                            NavigationLink(destination: RecipesView(recipeName: item, bookmark: nil, fromBookmarks: false, delete: UserDefaults.standard.bool(forKey: "RemvoeRename"))) {
+                                Text(item)
+                                    .font(.system(size: 24))
+                                    .fontWeight(.semibold)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .fixedSize(horizontal: false, vertical: true)
+                                    .foregroundColor(Color.white)
+                                    .padding(20)
+                                    .background(
+                                        Rectangle()
+                                            .foregroundColor(Color("greenColor"))
+                                            .cornerRadius(15)
+                                            .shadow(radius: 5)
+                                    )
                                     }
                                 }
                             }
@@ -122,7 +122,7 @@ struct RecipeList: View {
                                 .cornerRadius(15)
                                 .shadow(radius: 5)
                             
-                            NavigationLink(destination: RecipesView(recipeName: customMealText, bookmark: nil, fromBookmarks: false)) {
+                            NavigationLink(destination: RecipesView(recipeName: customMealText, bookmark: nil, fromBookmarks: false, delete: UserDefaults.standard.bool(forKey: "RemoveRename"))) {
                                 Text("Submit")
                                     .font(.system(size: 24))
                                     .fontWeight(.semibold)
