@@ -27,6 +27,7 @@ struct ProductsView: View {
     @State private var isManually = false
     @State private var isBarcodeSheet = false
     @State private var isErrorSheet = false
+    @State private var isBarcodeDate = false
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \Product.productName, ascending: true)],
         animation: .default)
@@ -189,7 +190,7 @@ struct ProductsView: View {
                 .sheet(isPresented: $isImportOverlay, onDismiss: {
                     self.isImportOverlay = false
                 }, content: {
-                    CodeScannerView(codeTypes: [.qr], simulatedData: "https://pastebin.com/cmuP5XaX", shouldVibrateOnSuccess: true, completion: handleQrScan)
+                    CodeScannerView(codeTypes: [.qr], simulatedData: "https://pastebin.com/RyhvK6Pw", shouldVibrateOnSuccess: true, completion: handleQrScan)
                 })
                 .sheet(isPresented: $isExportOverlay, onDismiss: {
                     self.isExportOverlay = false
@@ -223,6 +224,7 @@ struct ProductsView: View {
                                         self.isManually = false
                                         self.isBarcodeSheet = false
                                         self.isErrorSheet = false
+                                        self.isBarcodeDate = false
                                     }
                                     .foregroundColor(.white)
                                     .fontWeight(.semibold)
@@ -374,23 +376,30 @@ struct ProductsView: View {
                     }
                     .presentationDetents([.fraction(0.35)])
                 })
-                .sheet(isPresented: .constant(false), onDismiss: {}, content: { // change later to swap when barecode was found
+                .sheet(isPresented: $isShowingDateInput, onDismiss: {
+                    self.isShowingDateInput = false
+                }, content: {
                     VStack {
-                        Text("Add expiry date")
+                        Text("Add Expiry date")
                             .fontWeight(.heavy)
                             .font(.system(size: 36))
                             .padding(.bottom, 20)
 
-                        DatePicker("Expiry date", selection: $expiryDate, displayedComponents: .date)
-                            .padding(.horizontal)
-                            .padding(.bottom)
-                            .foregroundColor(.white)
-                            .font(.system(size: 24))
-                            .background(Color("greenColor"))
-                            .cornerRadius(15)
-                            .shadow(radius: 5)
+                        VStack {
+                            Text("Expiry date")
+                                .padding([.top, .leading, .trailing])
 
-                        Spacer()
+                            DatePicker("", selection: $expiryDate, displayedComponents: .date)
+                                .labelsHidden()
+                                .frame(maxWidth: .infinity, alignment: .center)
+                                .padding([.top, .leading, .trailing])
+                                .accentColor(.white)
+                        }
+                        .foregroundColor(.white)
+                        .font(.system(size: 24))
+                        .background(Color("greenColor"))
+                        .cornerRadius(15)
+                        .shadow(radius: 5)
 
                         Rectangle()
                             .foregroundColor(Color("greenColor"))
@@ -398,16 +407,18 @@ struct ProductsView: View {
                             .shadow(radius: 5)
                             .overlay {
                                 Button("Confirm") {
-                                    addItem(nameFromBarcode: productName, expirationDate: Date())
+                                    addItem(nameFromBarcode: productName, expirationDate: expiryDate)
                                     isShowingSheet = false
                                     isManually = false
                                     isBarcodeSheet = false
+                                    isShowingDateInput = false
                                 }
                                 .foregroundColor(.white)
                                 .fontWeight(.semibold)
                                 .font(.system(size: 24))
                             }
                     }
+                    .padding()
                     .presentationDetents([.fraction(0.35)])
                 })
                 .sheet(isPresented: $isErrorSheet, onDismiss: {
@@ -431,8 +442,8 @@ struct ProductsView: View {
                 }, content: {
                     CodeScannerView(codeTypes: [.codabar, .code39, .code39Mod43, .code93, .code128, .ean8, .ean13, .interleaved2of5, .itf14, .upce], simulatedData: "7427037876898", shouldVibrateOnSuccess: true, completion: handleScan)
                 })
-                .sheet(isPresented: $isShowingDateInput, onDismiss: {
-                    self.isShowingDateInput = false
+                .sheet(isPresented: $isBarcodeDate, onDismiss: {
+                    self.isBarcodeDate = false
                 }, content: {
                     VStack {
                         Text("Add Expiry date")
@@ -501,7 +512,7 @@ struct ProductsView: View {
         switch result {
         case .success(let result):
             api.getData(sharedUrl: result.string) { result, error in
-                if let error = error {
+                if error != nil {
                     print("Error occurred")
                 } else if let resultString = result {
                     let products = resultString.split(separator: ",").map(String.init)

@@ -8,13 +8,21 @@ struct HomePage: View {
         animation: .default
     )
     private var products: FetchedResults<Product>
-    // @EnvironmentObject var model: DefautlModel
-    @StateObject var api = ApiCall(prompt: "Give me 5 recipe names in a unordered list using dots based on those products [chicken, tomato sauce, pasta, cheese, mushrooms] keep it short", temperature: "0")
 
     @State private var animate = false
     @State private var text = false
-    @State private var launched = false
     @State var daysToAdd = UserDefaults.standard.integer(forKey: "ExpireDate")
+
+    @StateObject var api: ApiCall
+    var allProducts = PersistenceController.shared.getAllProducts()
+
+    init(allProducts: String) {
+        self.allProducts = allProducts
+        self._api = StateObject(wrappedValue: ApiCall(
+            prompt: "Give me 5 recipe names in a unordered list using dots based on those products \(allProducts) keep it short",
+            temperature: "0.7"
+        ))
+    }
 
     var body: some View {
         NavigationView {
@@ -32,7 +40,7 @@ struct HomePage: View {
 
                         ScrollView {
                             VStack {
-                                Text("Upcoming expire dates")
+                                Text("Upcoming expiry dates")
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                     .fontWeight(.semibold)
                                     .font(.system(size: 24))
@@ -64,7 +72,7 @@ struct HomePage: View {
                             .padding(.bottom, 20)
 
                             VStack {
-                                Text("Todays recommendation")
+                                Text("Today's recommendation")
                                     .fontWeight(.semibold)
                                     .font(.system(size: 24))
                                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -80,7 +88,6 @@ struct HomePage: View {
                                             VStack {
                                                 Text(api.response)
                                                     .frame(maxWidth: .infinity, alignment: .leading)
-                                                    .italic()
                                                     .font(.system(size: 20, weight: .bold))
                                                     .foregroundColor(Color.white)
                                                     .lineSpacing(25)
@@ -117,23 +124,15 @@ struct HomePage: View {
             }
         }
         .onAppear {
-            if !launched {
-                api.fetchData()
-                launched.toggle()
-            }
+            api.response = ""
+            api.fetchData()
         }
     }
 }
 
 func calculateDate(daysToAdd: Int) -> Date {
-    // Get the current date
     let currentDate = Date()
 
-    // Retrieve the number of days from UserDefaults
-    // let userDefaults = UserDefaults.standard
-    // let daysToAdd = userDefaults.integer(forKey: "ExpireDate")
-
-    // Add the number of days to the current date
     let calendar = Calendar.current
     let updatedDate = calendar.date(byAdding: .day, value: daysToAdd, to: currentDate)
 
@@ -145,6 +144,6 @@ func calculateDate(daysToAdd: Int) -> Date {
 
 struct HomePage_Previews: PreviewProvider {
     static var previews: some View {
-        HomePage()
+        HomePage(allProducts: "")
     }
 }

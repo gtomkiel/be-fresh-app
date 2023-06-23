@@ -6,17 +6,11 @@ struct SettingsView: View {
     @State private var disableNotification = UserDefaults.standard.bool(forKey: "DisableNotification")
     @State private var enableAutoDeleteProducts = UserDefaults.standard.bool(forKey: "enableAutoDeleteProducts")
     @State private var isEditing = false
-    @State private var showStatus2 = true
-    @State private var showStatus3 = true
-    @State private var showStatus4 = true
-    @State private var showStatus5 = true
+    @State private var pickerSheet = false
     
     var body: some View {
-        
         NavigationStack {
-            
             VStack {
-                
                 HStack {
                     Text("Settings")
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -26,69 +20,6 @@ struct SettingsView: View {
                 }
                 .padding(.vertical, 20)
                 List {
-                    Rectangle()
-                        .frame(height: 50)
-                        .foregroundColor(Color(red: 217, green: 217, blue :217))
-                        .cornerRadius(15)
-                        .overlay {
-                            Toggle("Rename Delete Products", isOn: $showStatus)
-                        }.onChange(of: showStatus) { newValue in
-                            UserDefaults.standard.set(newValue, forKey: "RemoveRename")
-                        }
-                    
-                    HStack {
-                        VStack(alignment: .leading, spacing: 0) {
-                            if isEditing {
-                                TextField("Enter date", text: Binding<String>(
-                                    get: { String(expireDate) },
-                                    set: { expireDate = Int($0) ?? 0 }
-                                ))
-                                .font(.system(size: 20))
-                                .fontWeight(.bold)
-                            } else {
-                                Text(String(expireDate))
-                                    .font(.system(size: 20))
-                                    .fontWeight(.bold)
-                            }
-                            Button(action: {
-                                isEditing.toggle()
-                                if isEditing == true{
-                                    UserDefaults.standard.set(Int(expireDate), forKey: "ExpireDate")
-                                    print(UserDefaults.standard.integer(forKey: "ExpireDate"))
-                                }
-                            }) {
-                                HStack {
-                                    Image(systemName: isEditing ? "checkmark" : "pencil")
-                                }
-                            }
-                        }
-                        .padding(.leading)
-                    }
-                    
-                    Rectangle()
-                        .frame(height: 50)
-                        .foregroundColor(Color(red: 217, green: 217, blue :217))
-                        .cornerRadius(15)
-                        .overlay {
-                            Toggle("Notifaction", isOn: $disableNotification)
-                        }.onChange(of: disableNotification) { newValue in
-                            UserDefaults.standard.set(newValue, forKey: "DisableNotification")
-                        }
-                    
-                    
-                    
-                    Rectangle()
-                        .frame(height: 50)
-                        .foregroundColor(Color(red: 217, green: 217, blue :217))
-                        .cornerRadius(15)
-                        .overlay {
-                            Toggle("Auto delete expiration products", isOn: $enableAutoDeleteProducts)
-                        }.onChange(of: enableAutoDeleteProducts) { newValue in
-                            UserDefaults.standard.set(newValue, forKey: "enableAutoDeleteProducts")
-                        }
-                
-                    
-                    
                     Rectangle()
                         .frame(height: 50)
                         .foregroundColor(Color(red: 217, green: 217, blue: 217))
@@ -103,12 +34,89 @@ struct SettingsView: View {
                                 }
                             }
                         }
+                    
+                    Rectangle()
+                        .frame(height: 50)
+                        .foregroundColor(Color(red: 217, green: 217, blue: 217))
+                        .cornerRadius(15)
+                        .overlay {
+                            Toggle("Additional product options", isOn: $showStatus)
+                        }.onChange(of: showStatus) { newValue in
+                            UserDefaults.standard.set(newValue, forKey: "RemoveRename")
+                        }
+                    
+                    Rectangle()
+                        .frame(height: 50)
+                        .foregroundColor(Color(red: 217, green: 217, blue: 217))
+                        .cornerRadius(15)
+                        .overlay {
+                            Toggle("Delete expired products", isOn: $enableAutoDeleteProducts)
+                        }.onChange(of: enableAutoDeleteProducts) { newValue in
+                            UserDefaults.standard.set(newValue, forKey: "enableAutoDeleteProducts")
+                        }
+                    
+                    Rectangle()
+                        .frame(height: 50)
+                        .foregroundColor(Color(red: 217, green: 217, blue: 217))
+                        .cornerRadius(15)
+                        .overlay {
+                            Toggle("Notifaction", isOn: $disableNotification)
+                        }.onChange(of: disableNotification) { newValue in
+                            UserDefaults.standard.set(newValue, forKey: "DisableNotification")
+                        }
+                    
+                    Rectangle()
+                        .frame(height: 50)
+                        .foregroundColor(Color(red: 217, green: 217, blue: 217))
+                        .cornerRadius(15)
+                        .overlay {
+                            Button {
+                                self.pickerSheet = true
+                            } label: {
+                                HStack {
+                                    Text("Upcoming expiries")
+                                    Spacer()
+                                    Text("\(expireDate) \(expireDate == 1 ? "day" : "days")")
+                                }
+                            }
+                        }
                 }
                 .scrollContentBackground(.hidden)
+                .sheet(isPresented: $pickerSheet, onDismiss: {
+                    self.pickerSheet = false
+                }, content: {
+                    VStack {
+                        Picker("Days before expiration", selection: $expireDate) {
+                            ForEach(0 ..< 15) { index in
+                                Text("\(index) \(index == 1 ? "day" : "days")")
+                                    .tag(index)
+                            }
+                        }
+                        .labelsHidden()
+                        .pickerStyle(WheelPickerStyle())
+                        
+                        Rectangle()
+                            .foregroundColor(Color("greenColor"))
+                            .cornerRadius(15)
+                            .shadow(radius: 5)
+                            .overlay {
+                                Button("Done") {
+                                    self.pickerSheet = false
+                                    UserDefaults.standard.set(Int(expireDate), forKey: "ExpireDate")
+                                }
+                                .foregroundColor(.white)
+                                .fontWeight(.semibold)
+                                .font(.system(size: 24))
+                            }
+                            .padding()
+                            .padding(.top, 50)
+                    }
+                    .presentationDetents([.fraction(0.35)])
+                })
             }
-            .background(Color(red: 253, green: 255, blue: 252))
-            
         }
+        .accentColor(Color("greenColor"))
+        .listStyle(.plain)
     }
 }
 
