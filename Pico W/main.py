@@ -22,7 +22,7 @@ print(f'Connected on {ip}')
 pinkRGB()
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-server_address = (ip, 143)
+server_address = (ip, 145)
 print(sys.stderr, 'starting up on %s port %s' % server_address)
 
 sock.bind(server_address)
@@ -44,21 +44,21 @@ while True:
             ini_name = apiConnect()
             print(ini_name)
             
-            if "API request failed" in ini_name: #Add cases for other code errors
+            if "API request failed" in ini_name: 
                 redRGB()
                 error = "404Error"
                 response = "HTTP/1.1 200 OK\r\nContent-Length: \r\n\r\n{}".format(error)
                 connection.sendall(response.encode("utf-8"))
                 continue
-            elif "1234" in ini_name:
+            elif "1234" in ini_name:			#If hotspot has no data
                 redRGB()
                 error = "no internet connection"
                 response = "HTTP/1.1 200 OK\r\nContent-Length: \r\n\r\n{}".format(error)
                 connection.sendall(response.encode("utf-8"))
-            else:
+            else:								#If successful
                 fin_name = ''
                 
-                if ',' in ini_name:
+                if ',' in ini_name:				#If product name has ' we split em to get the name without additional value
                     str_name = ini_name.split(",")
                     fin_name = str_name[0] + str_name[1]
                 else:

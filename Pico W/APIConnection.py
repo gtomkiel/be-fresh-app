@@ -28,13 +28,11 @@ def apiConnect():
             cleaned_data = string_data.rstrip('\r')
             barcode = cleaned_data  # Decode the bytes to a string
             
-            #API_ENDPOINT= "https://api.barcodelookup.com/v3/products?formatted=y&key={API_KEY}&barcode=" + barcode
             API_ENDPOINT= "https://api.barcodelookup.com/v3/products?formatted=y&key=npuhqctdgtlsjx45h6rma6c6b44y6c&barcode=" + barcode
             print(barcode)
             print(API_ENDPOINT)
-            #url = "https://api.barcodelookup.com/v3/products?formatted=y&key={API_KEY}&barcode={}".format(barcode)
+
             url = "https://api.barcodelookup.com/v3/products?formatted=y&key=npuhqctdgtlsjx45h6rma6c6b44y6c&barcode={}".format(barcode)
-            #time.sleep(2)
             response = urequests.get(API_ENDPOINT)
             print(type(barcode))
             print(barcode)

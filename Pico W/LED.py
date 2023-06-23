@@ -17,29 +17,13 @@ def amberRGB():
     sleep(0.3)
     
 def violetRGB():
-    #rgb.color = (128,0,128) #Violet
-    rgb.color = (128, 0, 32)
+    rgb.color = (128, 0, 32) #Violet
     sleep(0.3)
     
 def redRGB():
     rgb.color = (255, 0, 0)	#Red
-    sleep(0.3)
+    sleep(0.6)
 
 def greenRGB():
     rgb.color = (0, 255, 0) #Green
-    sleep(0.3)
-    
-    
-# while True:
-#     pinkRGB()
-#     sleep(1)
-#     blueRGB()
-#     sleep(1)
-#     amberRGB()
-#     sleep(1)
-#     violetRGB()
-#     sleep(1)
-#     greenRGB()
-#     sleep(1)
-#     redRGB()
-#     sleep(1)
+    sleep(0.6)
