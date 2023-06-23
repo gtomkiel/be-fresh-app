@@ -95,12 +95,21 @@ struct SettingsView: View {
                         .labelsHidden()
                         .pickerStyle(WheelPickerStyle())
                         
-                        Button {
-                            self.pickerSheet = false
-                            UserDefaults.standard.set(Int(expireDate), forKey: "ExpireDate")
-                        } label: {
-                            Text("Done")
-                        }
+                        Rectangle()
+                            .foregroundColor(Color("greenColor"))
+                            .cornerRadius(15)
+                            .shadow(radius: 5)
+                            .overlay {
+                                Button("Done") {
+                                    self.pickerSheet = false
+                                    UserDefaults.standard.set(Int(expireDate), forKey: "ExpireDate")
+                                }
+                                .foregroundColor(.white)
+                                .fontWeight(.semibold)
+                                .font(.system(size: 24))
+                            }
+                            .padding()
+                            .padding(.top, 50)
                     }
                     .presentationDetents([.fraction(0.35)])
                 })

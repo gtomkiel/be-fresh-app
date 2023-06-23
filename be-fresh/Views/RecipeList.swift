@@ -7,7 +7,7 @@ struct RecipeList: View {
     init(allProducts: String) {
         self.allProducts = allProducts
         self._api = StateObject(wrappedValue: ApiCall(
-            prompt: "Give me 5 recipe names using only text without styling and separated by comma based on those products \(allProducts)",
+            prompt: "Give me unordered list of 5 recipe names separated by comma based on those products \(allProducts)",
             temperature: "0.7"
         ))
     }
@@ -15,8 +15,6 @@ struct RecipeList: View {
     @State private var isShowingSheet = false
     @State private var customDetails = false
     @State private var customMealText = ""
-    
-    @State private var launched = false
     @State private var recipeFull = false
     @State var recipeName = ""
     
@@ -91,10 +89,8 @@ struct RecipeList: View {
             }
             .padding([.leading, .trailing])
             .onAppear {
-                if !launched {
-                    api.fetchData()
-                    launched.toggle()
-                }
+                api.response = ""
+                api.fetchData()
             }
             .sheet(isPresented: $isShowingSheet) {
                 NavigationView {

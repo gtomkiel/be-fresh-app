@@ -8,12 +8,21 @@ struct HomePage: View {
         animation: .default
     )
     private var products: FetchedResults<Product>
-    @StateObject var api = ApiCall(prompt: "Give me 5 recipe names in a unordered list using dots based on those products [chicken, tomato sauce, pasta, cheese, mushrooms] keep it short", temperature: "0")
 
     @State private var animate = false
     @State private var text = false
-    @State private var launched = false
     @State var daysToAdd = UserDefaults.standard.integer(forKey: "ExpireDate")
+
+    @StateObject var api: ApiCall
+    var allProducts = PersistenceController.shared.getAllProducts()
+
+    init(allProducts: String) {
+        self.allProducts = allProducts
+        self._api = StateObject(wrappedValue: ApiCall(
+            prompt: "Give me 5 recipe names in a unordered list using dots based on those products \(allProducts) keep it short",
+            temperature: "0.7"
+        ))
+    }
 
     var body: some View {
         NavigationView {
@@ -115,10 +124,8 @@ struct HomePage: View {
             }
         }
         .onAppear {
-            if !launched {
-                api.fetchData()
-                launched.toggle()
-            }
+            api.response = ""
+            api.fetchData()
         }
     }
 }
@@ -137,6 +144,6 @@ func calculateDate(daysToAdd: Int) -> Date {
 
 struct HomePage_Previews: PreviewProvider {
     static var previews: some View {
-        HomePage()
+        HomePage(allProducts: "")
     }
 }

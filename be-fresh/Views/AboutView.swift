@@ -2,38 +2,23 @@ import SwiftUI
 
 struct AboutView: View {
     @EnvironmentObject var model: DefautlModel
-    
+
     var body: some View {
-        VStack(alignment: .center) {
+        VStack {
             Image("aboutIcon")
                 .padding(.vertical)
-            
+
             Group {
                 Text("Be-fresh")
                 Text("Version 1.0")
             }
             .font(.headline)
             .padding(.horizontal)
-            
-            List {
-                Rectangle()
-                    .frame(height: 50)
-                    .foregroundColor(Color(red: 217, green: 217, blue: 217))
-                    .cornerRadius(15)
-                    
-                Rectangle()
-                    .frame(height: 50)
-                    .foregroundColor(Color(red: 217, green: 217, blue: 217))
-                    .cornerRadius(15)
-                    .overlay {
-                        NavigationLink {
-                            AboutDetailView()
-                        } label: {
-                            Text("What's Be Fresh?")
-                        }
-                    }
-            }
-            .listStyle(.plain)
+
+            Text("BeFresh is an app devoted to helping reduce food waste and help people keep track of their groceries and their expiry dates. It includes various innovative features such as recipe generation, a calendar detailing the expiration dates and much more!")
+                .padding()
+
+            Spacer()
         }
     }
 }

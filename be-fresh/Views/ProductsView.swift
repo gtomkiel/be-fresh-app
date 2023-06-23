@@ -501,7 +501,7 @@ struct ProductsView: View {
         switch result {
         case .success(let result):
             api.getData(sharedUrl: result.string) { result, error in
-                if let error = error {
+                if error != nil {
                     print("Error occurred")
                 } else if let resultString = result {
                     let products = resultString.split(separator: ",").map(String.init)

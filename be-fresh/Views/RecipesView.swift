@@ -130,7 +130,7 @@ struct RecipesView: View {
                     self.saved = true
 
                 }) {
-                    if let bookmark = self.bookmark?.bookmark {}
+                    if (self.bookmark?.bookmark) != nil {}
                     else {
                         if self.saved {
                             Image(systemName: "bookmark.fill")
