@@ -6,8 +6,6 @@ struct be_freshApp: App {
     @StateObject var defaultModel = DefautlModel()
 
     init() {
-        UserDefaults.standard.set(false, forKey: "FirstTime")
-
         if UserDefaults.standard.bool(forKey: "enableAutoDeleteProducts") {
             persistenceController.deleteoldProducts()
         }
