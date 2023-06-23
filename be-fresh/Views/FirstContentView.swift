@@ -21,8 +21,7 @@ struct FirstContentView: View {
                         .aspectRatio(contentMode:  .fit)
                         .padding(.bottom, 35.0)
                         .frame(width: 300.0, height: 300.0)
-                    Text("Lorem ipsum dolor sit amet, consectetur adipiscing elitIn molestie lacus ac congue")
-                    Text("pellentesque Donec")
+                    Text("Did you know 1/3 of all food produced lands in the landfill? Be the change, BeFresh!")
                     Spacer(minLength: 30)
                     NavigationLink(destination: NextContentView().environmentObject(model)) {
                         Text("Next")

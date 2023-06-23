@@ -1,6 +1,6 @@
 import CoreData
-import Foundation
 import EventKit
+import Foundation
 
 struct PersistenceController {
     static let shared = PersistenceController()
@@ -107,7 +107,6 @@ struct PersistenceController {
         }
     }
 
-    
     func getAllProducts() -> String {
         var allProductsString = ""
         let request: NSFetchRequest<Product> = Product.fetchRequest()
@@ -115,6 +114,21 @@ struct PersistenceController {
             let products = try container.viewContext.fetch(request)
             for product in products {
                 allProductsString += "\(String(describing: product.productName!)) "
+            }
+        } catch {
+            // Handle the error appropriately
+            print("Failed to fetch products: \(error)")
+        }
+        return allProductsString
+    }
+    
+    func getAllProductsCSV() -> String {
+        var allProductsString = ""
+        let request: NSFetchRequest<Product> = Product.fetchRequest()
+        do {
+            let products = try container.viewContext.fetch(request)
+            for product in products {
+                allProductsString += "\(String(describing: product.productName!)),\(String(describing: product.expirationDate!)),"
             }
         } catch {
             // Handle the error appropriately

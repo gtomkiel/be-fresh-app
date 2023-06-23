@@ -35,7 +35,6 @@ struct ListItemView: View {
                         
                         Text(date)
                             .font(.system(size: 15))
-                        
                     }
                     .padding(.leading)
                     Spacer()
@@ -43,21 +42,17 @@ struct ListItemView: View {
                         self.nutrition = true
                     }) {
                         HStack {
-                            Image(systemName: "list.clipboard")
+                            Image(systemName: "list.bullet.circle")
                         }
-                        .font(.title2)
+                        .font(.system(size: 30))
                         .foregroundColor(.white)
-                        .padding()
-                        .background(Color.purple)
-                        .cornerRadius(8)
                     }
-                    
                 }
                 .foregroundColor(Color.white)
                 
                 Spacer()
               
-                if rem && modification == true{
+                if rem && modification == true {
                     Button(action: {
                         isEditing.toggle()
                         if isEditing {
@@ -68,26 +63,20 @@ struct ListItemView: View {
                         }
                     }) {
                         HStack {
-                            Image(systemName: isEditing ? "checkmark" : "pencil")
+                            Image(systemName: isEditing ? "checkmark.circle" : "pencil.circle")
                         }
-                        .font(.title2)
+                        .font(.system(size: 30))
                         .foregroundColor(.white)
-                        .padding()
-                        .background(Color.yellow)
-                        .cornerRadius(8)
                     }
                     
                     Button(action: {
                         PersistenceController.shared.deleteProduct(prdct)
                     }) {
                         HStack {
-                            Image(systemName: "minus.circle")
+                            Image(systemName: "trash.circle")
                         }
-                        .font(.title2)
+                        .font(.system(size: 30))
                         .foregroundColor(.white)
-                        .padding()
-                        .background(Color.red)
-                        .cornerRadius(8)
                     }
                 }
             }

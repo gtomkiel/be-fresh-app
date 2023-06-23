@@ -1,12 +1,11 @@
 import SwiftUI
 
 struct RecipeList: View {
-    
-    //@FetchRequest(
+    // @FetchRequest(
 //        sortDescriptors: [NSSortDescriptor(keyPath: \Product.productName, ascending: true)],
 //        animation: .default)
-    //private var fetchedProducts: FetchedResults<Product>
-    //@StateObject var api: ApiCall
+    // private var fetchedProducts: FetchedResults<Product>
+    // @StateObject var api: ApiCall
 
     @StateObject var api: ApiCall
     var allProducts = PersistenceController.shared.getAllProducts()
@@ -21,7 +20,7 @@ struct RecipeList: View {
         print(allProducts)
     }
     
-    //"Give me 5 recipe names separated by comma based on those products
+    // "Give me 5 recipe names separated by comma based on those products
     
     @State private var isShowingSheet = false
     @State private var customMealText = ""
@@ -32,7 +31,9 @@ struct RecipeList: View {
     
     var body: some View {
         NavigationView {
-            VStack {
+            GeometryReader { _ in
+                ZStack {
+                    VStack {
                 HStack {
                     Text("Recipes")
                     Spacer()
@@ -73,48 +74,45 @@ struct RecipeList: View {
                                             .cornerRadius(15)
                                             .shadow(radius: 5)
                                     )
+                                    }
+                                }
                             }
                         }
                     }
                 }
-                
-                Spacer()
-                
-                Spacer()
-                HStack {
+                VStack {
                     Spacer()
-                    Button(action: {
-                        isShowingSheet = true
-                    }) {
-                        Image(systemName: "bubble.right.circle.fill")
-                            .resizable()
-                            .frame(width: 64, height: 64)
-                            .foregroundColor(.black)
+                    HStack {
+                        Spacer()
+                        Button(action: {
+                            isShowingSheet = true
+                        }) {
+                            Image(systemName: "bubble.right.circle.fill")
+                                .resizable()
+                                .frame(width: 64, height: 64)
+                                .foregroundColor(.black)
+                        }
+                        .padding()
+                        .clipShape(Circle())
+                        .shadow(radius: 10)
                     }
-                    .padding()
-                    .clipShape(Circle())
-                    .shadow(radius: 10)
                 }
             }
             .padding([.leading, .trailing])
             .onAppear {
                 if !launched {
-                    print("qhwrfiulqriuwrgoiuhqergiouqegophqergoihqeroighqeiorg")
                     api.fetchData()
-                    print(api.response)
-                    print(api.prompt)
-                    print(api.fetchData())
                     launched.toggle()
                 }
             }
             .sheet(isPresented: $isShowingSheet) {
                 NavigationView {
-                VStack {
-                    Text("Custom Meal")
-                        .fontWeight(.heavy)
-                        .font(.system(size: 36))
-                        .padding()
-                        .frame(maxWidth: .infinity)
+                    VStack {
+                        Text("Custom Meal")
+                            .fontWeight(.heavy)
+                            .font(.system(size: 36))
+                            .padding()
+                            .frame(maxWidth: .infinity)
                     
                         VStack {
                             TextField("...", text: $customMealText)

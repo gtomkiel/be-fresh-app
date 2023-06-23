@@ -2,7 +2,7 @@ import SwiftUI
 
 struct AboutDetailView: View {
     var body: some View {
-        Text("Lorem ipsum dolor sit amet, consectetur adipiscing elitIn molestie lacus ac congue")
+        Text("BeFresh is an app devoted to helping reduce food waste and help people keep track of their groceries and their expiry dates. It includes various innovative features such as recipe generation, a calendar detailing the expiration dates and much more!")
             .padding()
     }
 }
