@@ -582,7 +582,7 @@ struct ProductsView: View {
             let newProduct = Product(context: viewContext)
             newProduct.productName = nameFromBarcode
             newProduct.expirationDate = expirationDate
-            //the code below is for the real life, for presentation i need to change it.
+            // the code below is for the real life, for presentation i need to change it.
 //            let daysToSubtract = UserDefaults.standard.integer(forKey: "ExpireDate")
 //
 //            let calendar = Calendar.current
@@ -593,7 +593,7 @@ struct ProductsView: View {
 //            let newExpirationDate = calendar.date(byAdding: dateComponent, to: expDate!)
 //            print("----------------------")
 //            print(newExpirationDate)
-            //code for presentation
+            // code for presentation
             var currentDate = Date()
 
             let calendar = Calendar.current
