@@ -86,30 +86,8 @@ struct SettingsView: View {
                         }.onChange(of: enableAutoDeleteProducts) { newValue in
                             UserDefaults.standard.set(newValue, forKey: "enableAutoDeleteProducts")
                         }
+                
                     
-                    Rectangle()
-                        .frame(height: 50)
-                        .foregroundColor(Color(red: 217, green: 217, blue: 217))
-                        .cornerRadius(15)
-                        .overlay {
-                            Toggle("Toggle option 3", isOn: $showStatus3)
-                        }
-                    
-                    Rectangle()
-                        .frame(height: 50)
-                        .foregroundColor(Color(red: 217, green: 217, blue: 217))
-                        .cornerRadius(15)
-                        .overlay {
-                            Toggle("Toggle option 4", isOn: $showStatus4)
-                        }
-                    
-                    Rectangle()
-                        .frame(height: 50)
-                        .foregroundColor(Color(red: 217, green: 217, blue: 217))
-                        .cornerRadius(15)
-                        .overlay {
-                            Toggle("Toggle option 5", isOn: $showStatus5)
-                        }
                     
                     Rectangle()
                         .frame(height: 50)
