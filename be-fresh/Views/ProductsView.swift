@@ -1,24 +1,32 @@
 import CodeScanner
 import CoreData
+import CoreImage
+import CoreImage.CIFilterBuiltins
 import EventKit
 import Foundation
 import SwiftUI
 
 struct ProductsView: View {
     let parser = ApiParser()
+    let api = shareApi()
     @State private var productName = ""
+    @State private var shareLink = ""
     @State private var expiryDate = Date()
-    @State private var isManually = false
-    @State private var isBarcodeSheet = false
     @State var rem = UserDefaults.standard.bool(forKey: "RemoveRename")
     @State private var perCont = PersistenceController.shared
     @State private var isEditing = false
     @State private var currentDate = Date()
-    @State private var isErrorSheet = false
     @Environment(\.managedObjectContext) var viewContext
     @State private var isShowingSheet = false
     @State private var isShowingCamera = false
     @State private var isShowingDateInput = false
+    @State private var isProductsOverlay = false
+    @State private var isShareOverlay = false
+    @State private var isImportOverlay = false
+    @State private var isExportOverlay = false
+    @State private var isManually = false
+    @State private var isBarcodeSheet = false
+    @State private var isErrorSheet = false
     @FetchRequest(
         sortDescriptors: [NSSortDescriptor(keyPath: \Product.productName, ascending: true)],
         animation: .default)
@@ -26,6 +34,8 @@ struct ProductsView: View {
     @State private var isSwiped = false
     @GestureState private var dragOffset: CGSize = .zero
     @State private var remove = false
+    @State private var productList = String()
+    @State private var qrCodeImage: UIImage?
 
     var body: some View {
         NavigationView {
@@ -76,9 +86,9 @@ struct ProductsView: View {
                         HStack {
                             Spacer()
                             Button(action: {
-                                isShowingSheet = true
+                                isProductsOverlay = true
                             }) {
-                                Image(systemName: "plus.circle.fill")
+                                Image(systemName: "ellipsis.circle.fill")
                                     .resizable()
                                     .frame(width: 64, height: 64)
                                     .foregroundColor(.black)
@@ -90,7 +100,144 @@ struct ProductsView: View {
                     }
                 }
                 .padding([.leading, .trailing])
-                .sheet(isPresented: $isShowingSheet) {
+                .sheet(isPresented: $isProductsOverlay, onDismiss: {
+                    self.isProductsOverlay = false
+                }, content: {
+                    VStack {
+                        Text("Options")
+                            .fontWeight(.heavy)
+                            .font(.system(size: 36))
+                            .padding(.bottom, 20)
+                        Spacer()
+                        Rectangle()
+                            .foregroundColor(Color("greenColor"))
+                            .cornerRadius(15)
+                            .shadow(radius: 5)
+                            .overlay {
+                                Button("Add product") {
+                                    isProductsOverlay = false
+                                    isShowingSheet = true
+                                }
+                                .foregroundColor(.white)
+                                .fontWeight(.semibold)
+                                .font(.system(size: 24))
+                            }
+                        Rectangle()
+                            .foregroundColor(Color("greenColor"))
+                            .cornerRadius(15)
+                            .shadow(radius: 5)
+                            .overlay {
+                                Button("Share list") {
+                                    isProductsOverlay = false
+                                    isShareOverlay = true
+                                }
+                                .foregroundColor(.white)
+                                .fontWeight(.semibold)
+                                .font(.system(size: 24))
+                            }
+                    }
+                    .padding()
+                    .presentationDetents([.fraction(0.35)])
+                })
+                .sheet(isPresented: $isShareOverlay, onDismiss: {
+                    self.isShareOverlay = false
+                }, content: {
+                    VStack {
+                        Text("Share products")
+                            .fontWeight(.heavy)
+                            .font(.system(size: 36))
+                            .padding(.bottom, 20)
+                        Spacer()
+                        Rectangle()
+                            .foregroundColor(Color("greenColor"))
+                            .cornerRadius(15)
+                            .shadow(radius: 5)
+                            .overlay {
+                                Button("Import products") {
+                                    isShareOverlay = false
+                                    isImportOverlay = true
+                                }
+                                .foregroundColor(.white)
+                                .fontWeight(.semibold)
+                                .font(.system(size: 24))
+                            }
+                        Rectangle()
+                            .foregroundColor(Color("greenColor"))
+                            .cornerRadius(15)
+                            .shadow(radius: 5)
+                            .overlay {
+                                Button("Share products") {
+                                    isShareOverlay = false
+                                    isExportOverlay = true
+
+                                    api.shareLink(pasteData: PersistenceController.shared.getAllProductsCSV()) { response, error in
+                                        if let error = error {
+                                            print(error)
+                                        } else if let response = response {
+                                            self.qrCodeImage = generateQRCode(from: response)
+                                        }
+                                    }
+                                }
+                                .foregroundColor(.white)
+                                .fontWeight(.semibold)
+                                .font(.system(size: 24))
+                            }
+                    }
+                    .padding()
+                    .presentationDetents([.fraction(0.35)])
+                })
+                .sheet(isPresented: $isImportOverlay, onDismiss: {
+                    self.isImportOverlay = false
+                }, content: {
+                    CodeScannerView(codeTypes: [.qr], simulatedData: "https://pastebin.com/cmuP5XaX", shouldVibrateOnSuccess: true, completion: handleQrScan)
+                })
+                .sheet(isPresented: $isExportOverlay, onDismiss: {
+                    self.isExportOverlay = false
+                    self.qrCodeImage = nil
+                }, content: {
+                    VStack {
+                        Text("Scan the QR code")
+                            .fontWeight(.heavy)
+                            .font(.system(size: 36))
+
+                        if qrCodeImage != nil {
+                            Image(uiImage: qrCodeImage!)
+                                .resizable()
+                                .interpolation(.none)
+                                .scaledToFit()
+                                .frame(width: 200, height: 200)
+
+                            Rectangle()
+                                .foregroundColor(Color("greenColor"))
+                                .cornerRadius(15)
+                                .shadow(radius: 5)
+                                .overlay {
+                                    Button("Done") {
+                                        self.isShowingSheet = false
+                                        self.isShowingCamera = false
+                                        self.isShowingDateInput = false
+                                        self.isProductsOverlay = false
+                                        self.isShareOverlay = false
+                                        self.isImportOverlay = false
+                                        self.isExportOverlay = false
+                                        self.isManually = false
+                                        self.isBarcodeSheet = false
+                                        self.isErrorSheet = false
+                                    }
+                                    .foregroundColor(.white)
+                                    .fontWeight(.semibold)
+                                    .font(.system(size: 24))
+                                }
+                        } else {
+                            ProgressView()
+                        }
+                    }
+                    .padding()
+                    .presentationDetents([.fraction(0.5)])
+                })
+                .sheet(isPresented: $isShowingSheet, onDismiss: {
+                    self.isShowingSheet = false
+                }, content: {
                     VStack {
                         Text("Add Product")
                             .fontWeight(.heavy)
@@ -122,7 +269,7 @@ struct ProductsView: View {
                                     isManually = false
                                     isBarcodeSheet = true
                                     print("barcode stuff is running")
-                                    var responseString: String? = nil
+                                    var responseString: String?
 
                                     // Send the command
                                     let command = "startBarcode"
@@ -167,8 +314,10 @@ struct ProductsView: View {
                     }
                     .padding()
                     .presentationDetents([.fraction(0.35)])
-                }
-                .sheet(isPresented: $isManually) {
+                })
+                .sheet(isPresented: $isManually, onDismiss: {
+                    self.isManually = false
+                }, content: {
                     VStack {
                         Text("Add Product")
                             .fontWeight(.heavy)
@@ -208,8 +357,10 @@ struct ProductsView: View {
                     }
                     .padding()
                     .presentationDetents([.fraction(0.35)])
-                }
-                .sheet(isPresented: $isBarcodeSheet) {
+                })
+                .sheet(isPresented: $isBarcodeSheet, onDismiss: {
+                    self.isBarcodeSheet = false
+                }, content: {
                     VStack {
                         Text("Scan the barcode now")
                             .fontWeight(.heavy)
@@ -222,8 +373,8 @@ struct ProductsView: View {
                             .foregroundColor(.black)
                     }
                     .presentationDetents([.fraction(0.35)])
-                }
-                .sheet(isPresented: .constant(false)) { // change later to swap when barecode was found
+                })
+                .sheet(isPresented: .constant(false), onDismiss: {}, content: { // change later to swap when barecode was found
                     VStack {
                         Text("Add expiry date")
                             .fontWeight(.heavy)
@@ -258,8 +409,10 @@ struct ProductsView: View {
                             }
                     }
                     .presentationDetents([.fraction(0.35)])
-                }
-                .sheet(isPresented: $isErrorSheet) {
+                })
+                .sheet(isPresented: $isErrorSheet, onDismiss: {
+                    self.isErrorSheet = false
+                }, content: {
                     VStack {
                         Text("Product not found!")
                             .fontWeight(.heavy)
@@ -272,11 +425,15 @@ struct ProductsView: View {
                             .foregroundColor(.black)
                     }
                     .presentationDetents([.fraction(0.35)])
-                }
-                .sheet(isPresented: $isShowingCamera) {
+                })
+                .sheet(isPresented: $isShowingCamera, onDismiss: {
+                    self.isShowingCamera = false
+                }, content: {
                     CodeScannerView(codeTypes: [.codabar, .code39, .code39Mod43, .code93, .code128, .ean8, .ean13, .interleaved2of5, .itf14, .upce], simulatedData: "7427037876898", shouldVibrateOnSuccess: true, completion: handleScan)
-                }
-                .sheet(isPresented: $isShowingDateInput) {
+                })
+                .sheet(isPresented: $isShowingDateInput, onDismiss: {
+                    self.isShowingDateInput = false
+                }, content: {
                     VStack {
                         Text("Add Expiry date")
                             .fontWeight(.heavy)
@@ -318,8 +475,57 @@ struct ProductsView: View {
                     }
                     .padding()
                     .presentationDetents([.fraction(0.35)])
+                })
+            }
+        }
+    }
+
+    func generateQRCode(from string: String) -> UIImage {
+        let context = CIContext()
+        let filter = CIFilter.qrCodeGenerator()
+
+        filter.message = Data(string.utf8)
+
+        if let outputImage = filter.outputImage {
+            if let cgimg = context.createCGImage(outputImage, from: outputImage.extent) {
+                return UIImage(cgImage: cgimg)
+            }
+        }
+
+        return UIImage(systemName: "exclamationmark.triangle.fill") ?? UIImage()
+    }
+
+    func handleQrScan(result: Result<ScanResult, ScanError>) {
+        isImportOverlay = false
+
+        switch result {
+        case .success(let result):
+            api.getData(sharedUrl: result.string) { result, error in
+                if let error = error {
+                    print("Error occurred")
+                } else if let resultString = result {
+                    let products = resultString.split(separator: ",").map(String.init)
+                    let dateFormatter = DateFormatter()
+                    dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
+
+                    for i in stride(from: 0, to: products.count, by: 2) {
+                        if i + 1 < products.count {
+                            let dateTimeOffset = products[i + 1].components(separatedBy: " ")
+
+                            if dateTimeOffset.count >= 3 {
+                                let dateString = "\(dateTimeOffset[0]) \(dateTimeOffset[1]) +0000"
+                                dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
+                                if let date = dateFormatter.date(from: dateString) {
+                                    addItem(nameFromBarcode: products[i], expirationDate: date)
+                                }
+                            }
+                        }
+                    }
                 }
             }
+
+        case .failure:
+            print("Scanning failed")
         }
     }
 
